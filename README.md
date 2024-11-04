@@ -8,7 +8,7 @@ I found this Universal NER project that came out this year. Some links: [website
 > 
 > UNER is modeled after the Universal Dependencies project, in that it is intended to be a large community annotation effort with language-universal guidelines. Further, we use the same text corpora as Universal Dependencies.
 
-Basically, it seems to be what [scandiNER](https://huggingface.co/saattrupdan/nbailab-base-ner-scandi) did, but cleaner and more accessible.
+Basically, it seems to be what [scandiNER](https://huggingface.co/saattrupdan/nbailab-base-ner-scandi) did, but cleaner and more accessible. They used the same annotations guidelines as NorNE (dataset used by scandiNER).
 
 
 All datas are in [IOB2 format](https://en.wikipedia.org/wiki/Inside%E2%80%93outside%E2%80%93beginning_(tagging))
