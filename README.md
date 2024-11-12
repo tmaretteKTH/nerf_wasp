@@ -1,5 +1,44 @@
 # nerf_wasp
 
+## Run quickstart example on Alvis
+
+Follow [this PyTorch-lightning Flower quickstart guide](https://github.com/adap/flower/tree/main/examples/quickstart-pytorch-lightning).
+
+### Set up environment
+
+> Only needs to be done once on Alvis! You should be able to go directly to "Run example".
+
+Before `pip install -e .` in the guide:
+```bash
+module purge
+module load Python/3.10.8-GCCcore-12.2.0
+python -m venv /mimer/NOBACKUP/groups/naiss2024-22-1455/venvs/venv_example_lightning
+source /mimer/NOBACKUP/groups/naiss2024-22-1455/venvs/venv_example_lightning/bin/activate
+```
+
+Small edit to avoid python import deadlock - downgrade datasets from 3.1.0 to 2.21.0.
+```bash
+cd quickstart-pytorch-lightning
+pip install -e .
+pip install datasets==2.21.0
+```
+
+From the `quickstart-pytorch-lightning` folder:
+```bash
+flwr run .
+```
+
+### Run example
+
+```bash
+module purge
+module load Python/3.10.8-GCCcore-12.2.0
+source /mimer/NOBACKUP/groups/naiss2024-22-1455/venvs/venv_example_lightning/bin/activate
+
+cd quickstart-pytorch-lightning
+flwr run .
+```
+
 ## Datasets
 
 I found this Universal NER project that came out this year. Some links: [website](https://www.universalner.org/), [research paper](https://arxiv.org/html/2311.09122v2), [git](https://github.com/UniversalNER)
