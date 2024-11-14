@@ -1,0 +1,41 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "nerf_wasp"
+version = "1.0.0"
+description = "Federated Learning with PyTorch Lightning and Flower (NER)"
+license = "Apache-2.0"
+dependencies = [
+    "flwr[simulation]>=1.12.0",
+    "flwr-datasets[vision]>=0.3.0",
+    "pytorch-lightning<2.0.0; sys_platform == 'darwin'",
+    "pytorch-lightning==1.6.0; sys_platform != 'darwin'",
+    "torch==1.13.1",
+    "torchvision==0.14.1",
+    "datasets==2.21.0",
+    "conllu==6.0.0",
+    "transformers==4.46.2",
+    "seqeval==1.2.2"
+]
+
+[tool.hatch.build.targets.wheel]
+packages = ["."]
+
+[tool.flwr.app]
+publisher = "flwrlabs"
+
+[tool.flwr.app.components]
+serverapp = "src.server_app:app"
+clientapp = "src.client_app:app"
+
+[tool.flwr.app.config]
+num-server-rounds = 1
+max-epochs = 1
+
+[tool.flwr.federations]
+default = "local-simulation"
+
+[tool.flwr.federations.local-simulation]
+options.num-supernodes = 1

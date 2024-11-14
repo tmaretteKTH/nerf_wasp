@@ -1,5 +1,11 @@
 # nerf_wasp
 
+## Run our code 
+
+```bash
+flwr run .
+```
+
 ## Run quickstart example on Alvis
 
 Follow [this PyTorch-lightning Flower quickstart guide](https://github.com/adap/flower/tree/main/examples/quickstart-pytorch-lightning).
