@@ -41,6 +41,8 @@ flwr run .
 
 ## Datasets
 
+We will use [this dataset](https://huggingface.co/datasets/K2triinK/universal_ner_nordic_FL) for the project.
+
 I found this Universal NER project that came out this year. Some links: [website](https://www.universalner.org/), [research paper](https://arxiv.org/html/2311.09122v2), [git](https://github.com/UniversalNER)
 
 > Universal Named Entity Recognition (UNER) aims to fill a gap in multilingual NLP: high quality NER datasets in many languages with a shared tagset.
