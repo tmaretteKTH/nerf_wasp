@@ -1,8 +1,10 @@
 """pytorchlightning_example: A Flower / PyTorch Lightning app."""
 
+from logging import INFO, DEBUG
 import pytorch_lightning as pl
 from flwr.client import Client, ClientApp, NumPyClient
 from flwr.common import Context
+from flwr.common.logger import log
 
 from src.task import (
     NERLightningModule,
@@ -23,11 +25,14 @@ class FlowerClient(NumPyClient):
         # Determine device
         self.device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
         self.model.to(self.device)  # send model to device
+        
+        log(INFO, f"Client {self.cid} initialized.")
 
     def fit(self, parameters, config):
         """Train the model with data of this client."""
         set_parameters(self.model, parameters)
-
+        
+        log(INFO, f"Client {self.cid} is doing fit() with config: {config}")
         trainer = pl.Trainer(max_epochs=self.max_epochs, enable_progress_bar=False)
         trainer.fit(self.model.to(self.device), self.train_loader, self.val_loader)
 
@@ -46,11 +51,13 @@ class FlowerClient(NumPyClient):
 
 def client_fn(context: Context) -> Client:
     """Construct a Client that will be run in a ClientApp."""
+    # raise ValueError("Can you see this?") # can't
+    log(INFO, f"client_fn called with context {context}") # can't see this either
 
     # Read the node_config to fetch data partition associated to this node
     partition_id = context.node_config["partition-id"]
     num_partitions = context.node_config["num-partitions"]
-    train_loader, val_loader, test_loader = load_data(partition_id, num_partitions)
+    train_loader, val_loader, test_loader = load_data(partition_id)
 
     # Read run_config to fetch hyperparameters relevant to this run
     max_epochs = context.run_config["max-epochs"]
