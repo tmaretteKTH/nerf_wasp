@@ -77,8 +77,6 @@ def set_parameters(model, parameters):
 DATA_NAMES = ["da_ddt", "sv_talbanken", "nno_norne", "nob_norne"]
 
 def load_data(partition_id, batch_size=32, num_workers=2, model_name="FacebookAI/xlm-roberta-large"):
-    print(f"Partition ID: {partition_id}")
-    
     # Select the unique dataset for this client
     dataset_name = DATA_NAMES[partition_id]
     partition = load_dataset('universalner/universal_ner', dataset_name, trust_remote_code=True)

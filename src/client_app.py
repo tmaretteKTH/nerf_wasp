@@ -19,13 +19,17 @@ class FlowerClient(NumPyClient):
         self.val_loader = val_loader
         self.test_loader = test_loader
         self.max_epochs = max_epochs
+        
+        # Determine device
+        self.device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
+        self.model.to(self.device)  # send model to device
 
     def fit(self, parameters, config):
         """Train the model with data of this client."""
         set_parameters(self.model, parameters)
 
         trainer = pl.Trainer(max_epochs=self.max_epochs, enable_progress_bar=False)
-        trainer.fit(self.model, self.train_loader, self.val_loader)
+        trainer.fit(self.model.to(self.device), self.train_loader, self.val_loader)
 
         return get_parameters(self.model), len(self.train_loader.dataset), {}
 
@@ -34,7 +38,7 @@ class FlowerClient(NumPyClient):
         set_parameters(self.model, parameters)
 
         trainer = pl.Trainer(enable_progress_bar=False)
-        results = trainer.test(self.model, self.test_loader)
+        results = trainer.test(self.model.to(self.device), self.test_loader)
         loss = results[0]["test_loss"]
 
         return loss, len(self.test_loader.dataset), {}

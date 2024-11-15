@@ -1,14 +1,17 @@
 """pytorchlightning_example: A Flower / PyTorch Lightning app."""
 
+from logging import INFO, DEBUG
 from flwr.common import Context, ndarrays_to_parameters
 from flwr.server import ServerApp, ServerAppComponents, ServerConfig
 from flwr.server.strategy import FedAvg
+from flwr.common.logger import log
 from src.task import NERLightningModule, get_parameters
 
 
 def server_fn(context: Context) -> ServerAppComponents:
     """Construct components for ServerApp."""
-
+    log(INFO, f"Starting server with run context: {context}")
+    
     # Convert model parameters to flwr.common.Parameters
     ndarrays = get_parameters(NERLightningModule())
     global_model_init = ndarrays_to_parameters(ndarrays)

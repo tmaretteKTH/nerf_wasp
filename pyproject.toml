@@ -35,7 +35,9 @@ num-server-rounds = 1
 max-epochs = 1
 
 [tool.flwr.federations]
-default = "local-simulation"
+default = "local-simulation-gpu"
 
-[tool.flwr.federations.local-simulation]
+[tool.flwr.federations.local-simulation-gpu]
 options.num-supernodes = 1
+options.backend.client-resources.num-cpus = 1
+options.backend.client-resources.num-gpus = 1
