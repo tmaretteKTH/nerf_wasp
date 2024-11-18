@@ -11,6 +11,12 @@ pip install -e . # you should only need to run this once
 flwr run .
 ```
 
+## Run tests using pytest
+
+```bash
+python -m pytest test
+```
+
 ## Run quickstart example on Alvis
 
 Follow [this PyTorch-lightning Flower quickstart guide](https://github.com/adap/flower/tree/main/examples/quickstart-pytorch-lightning).

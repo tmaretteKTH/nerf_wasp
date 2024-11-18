@@ -44,3 +44,8 @@ default = "local-simulation-gpu"
 options.num-supernodes = 2
 options.backend.client-resources.num-cpus = 1
 options.backend.client-resources.num-gpus = 1
+
+[tool.pytest.ini_options]
+pythonpath = [
+  "."
+]
