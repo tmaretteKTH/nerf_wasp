@@ -70,7 +70,7 @@ def get_parameters(model):
 
 def set_parameters(model, parameters):
     params_dict = zip(model.state_dict().keys(), parameters)
-    state_dict = OrderedDict({k: torch.tensor(v) for k, v in params_dict})
+    state_dict = OrderedDict({k: torch.Tensor(v) for k, v in params_dict})
     model.load_state_dict(state_dict, strict=True)
 
 # "sv_pud"
@@ -85,11 +85,11 @@ def load_data(partition_id, batch_size=32, num_workers=2, model_name="FacebookAI
     # Tokenize the dataset
     def tokenize_and_align_labels(batch):
         # Tokenize the input text
-        tokenized_inputs = tokenizer(batch["text"], truncation=True, padding="max_length", max_length=tokenizer.model_max_length, is_split_into_words=True)
+        tokenized_inputs = tokenizer(batch["tokens"], truncation=True, padding="max_length", max_length=tokenizer.model_max_length, is_split_into_words=True)
 
         # Align labels with tokens
         labels = []
-        for i, label in enumerate(batch["labels"]):
+        for i, label in enumerate(batch["ner_tags"]):
             word_ids = tokenized_inputs.word_ids(batch_index=i)
             label_ids = [-100 if word_id is None else label[word_id] for word_id in word_ids]
             labels.append(label_ids)
@@ -98,9 +98,14 @@ def load_data(partition_id, batch_size=32, num_workers=2, model_name="FacebookAI
         return tokenized_inputs
 
     # Apply tokenization to the entire dataset
-    tokenized_train_partition = partition["train"].map(tokenize_and_align_labels, batched=True)
-    tokenized_val_partition = partition["validation"].map(tokenize_and_align_labels, batched=True)
-    tokenized_test_partition = partition["test"].map(tokenize_and_align_labels, batched=True)
+    tokenized_train_partition = partition["train"].map(tokenize_and_align_labels, remove_columns=["idx", "text", "tokens", "ner_tags", "annotator"], batched=True)
+    tokenized_train_partition.set_format('torch', columns=['input_ids', 'attention_mask', 'labels'])
+    
+    tokenized_val_partition = partition["validation"].map(tokenize_and_align_labels, remove_columns=["idx", "text", "tokens", "ner_tags", "annotator"], batched=True)
+    tokenized_val_partition.set_format('torch', columns=['input_ids', 'attention_mask', 'labels'])
+    
+    tokenized_test_partition = partition["test"].map(tokenize_and_align_labels, remove_columns=["idx", "text", "tokens", "ner_tags", "annotator"], batched=True)
+    tokenized_test_partition.set_format('torch', columns=['input_ids', 'attention_mask', 'labels'])
 
     # Create data loaders for each split
     train_loader = DataLoader(

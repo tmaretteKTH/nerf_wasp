@@ -1,6 +1,7 @@
 """pytorchlightning_example: A Flower / PyTorch Lightning app."""
 
 from logging import INFO, DEBUG
+import torch
 import pytorch_lightning as pl
 from flwr.client import Client, ClientApp, NumPyClient
 from flwr.common import Context
@@ -26,13 +27,13 @@ class FlowerClient(NumPyClient):
         self.device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
         self.model.to(self.device)  # send model to device
         
-        log(INFO, f"Client {self.cid} initialized.")
+        log(INFO, f"Client initialized.")
 
     def fit(self, parameters, config):
         """Train the model with data of this client."""
         set_parameters(self.model, parameters)
         
-        log(INFO, f"Client {self.cid} is doing fit() with config: {config}")
+        log(INFO, f"Client is doing fit() with config: {config}")
         trainer = pl.Trainer(max_epochs=self.max_epochs, enable_progress_bar=False)
         trainer.fit(self.model.to(self.device), self.train_loader, self.val_loader)
 
