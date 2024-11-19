@@ -9,7 +9,7 @@ import torch
 from flwr_datasets import FederatedDataset
 from flwr_datasets.partitioner import IidPartitioner
 from torch.utils.data import DataLoader
-from transformers import AutoTokenizer, XLMRobertaForTokenClassification
+from transformers import AutoTokenizer, AutoModelForTokenClassification
 from datasets import load_metric, load_dataset
 from datasets.utils.logging import disable_progress_bar
 
@@ -21,7 +21,7 @@ class NERLightningModule(pl.LightningModule):
     
     def __init__(self, model_name="FacebookAI/xlm-roberta-large", num_labels=7, learning_rate=2e-5) -> None:
         super().__init__()
-        self.model = XLMRobertaForTokenClassification.from_pretrained(model_name, num_labels=num_labels) 
+        self.model = AutoModelForTokenClassification.from_pretrained(model_name, num_labels=num_labels) 
         self.learning_rate = learning_rate
         self.metric = load_metric("seqeval", trust_remote_code=True)
         
@@ -73,12 +73,8 @@ def set_parameters(model, parameters):
     state_dict = OrderedDict({k: torch.Tensor(v) for k, v in params_dict})
     model.load_state_dict(state_dict, strict=True)
 
-# "sv_pud"
-DATA_NAMES = ["da_ddt", "sv_talbanken", "nno_norne", "nob_norne"]
-
-def load_data(partition_id, batch_size=32, num_workers=2, model_name="FacebookAI/xlm-roberta-large"):
+def load_data(dataset_name, batch_size=32, num_workers=8, model_name="FacebookAI/xlm-roberta-large"):
     # Select the unique dataset for this client
-    dataset_name = DATA_NAMES[partition_id]
     partition = load_dataset('universalner/universal_ner', dataset_name, trust_remote_code=True)
     tokenizer = AutoTokenizer.from_pretrained(model_name)
     

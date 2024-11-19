@@ -2,12 +2,16 @@
 
 ## Run our code 
 
+Install the required packates (if necessary) and log in to your wandb account, as follows:
+
 ```bash
 module purge
 module load Python/3.10.8-GCCcore-12.2.0
 source /mimer/NOBACKUP/groups/naiss2024-22-1455/venvs/venv_example_lightning/bin/activate
 
 pip install -e . # you should only need to run this once
+
+wandb login  
 flwr run .
 ```
 

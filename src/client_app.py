@@ -6,6 +6,7 @@ import pytorch_lightning as pl
 from flwr.client import Client, ClientApp, NumPyClient
 from flwr.common import Context
 from flwr.common.logger import log
+from pytorch_lightning.loggers import WandbLogger
 
 from src.task import (
     NERLightningModule,
@@ -14,14 +15,22 @@ from src.task import (
     set_parameters,
 )
 
+# "sv_pud"
+DATA_NAMES = ["da_ddt", "sv_talbanken", "nno_norne", "nob_norne"]
 
 class FlowerClient(NumPyClient):
-    def __init__(self, train_loader, val_loader, test_loader, max_epochs):
-        self.model = NERLightningModule()
+    def __init__(self, train_loader, val_loader, test_loader, max_epochs, model_name=None, dataset_name=None):
+        self.model = NERLightningModule(model_name=model_name)
         self.train_loader = train_loader
         self.val_loader = val_loader
         self.test_loader = test_loader
         self.max_epochs = max_epochs
+        self.model_name = model_name
+        self.dataset_name = dataset_name
+        
+        wandb_logger = WandbLogger(project="nerf_wasp", name=f"{self.dataset_name}")
+        wandb_logger.experiment.config.update({"model": self.model_name})
+        self.trainer = pl.Trainer(max_epochs=self.max_epochs, logger=wandb_logger, accelerator="auto", enable_progress_bar=True)
         
         # Determine device
         self.device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
@@ -34,8 +43,7 @@ class FlowerClient(NumPyClient):
         set_parameters(self.model, parameters)
         
         log(INFO, f"Client is doing fit() with config: {config}")
-        trainer = pl.Trainer(max_epochs=self.max_epochs, enable_progress_bar=False)
-        trainer.fit(self.model.to(self.device), self.train_loader, self.val_loader)
+        self.trainer.fit(self.model.to(self.device), self.train_loader, self.val_loader)
 
         return get_parameters(self.model), len(self.train_loader.dataset), {}
 
@@ -43,8 +51,7 @@ class FlowerClient(NumPyClient):
         """Evaluate the model on the data this client has."""
         set_parameters(self.model, parameters)
 
-        trainer = pl.Trainer(enable_progress_bar=False)
-        results = trainer.test(self.model.to(self.device), self.test_loader)
+        results = self.trainer.test(self.model.to(self.device), self.test_loader)
         loss = results[0]["test_loss"]
 
         return loss, len(self.test_loader.dataset), {}
@@ -57,12 +64,13 @@ def client_fn(context: Context) -> Client:
 
     # Read the node_config to fetch data partition associated to this node
     partition_id = context.node_config["partition-id"]
-    num_partitions = context.node_config["num-partitions"]
-    train_loader, val_loader, test_loader = load_data(partition_id)
+    
+    dataset_name = DATA_NAMES[partition_id]
+    train_loader, val_loader, test_loader = load_data(dataset_name, model_name=context.run_config["model-name"])
 
     # Read run_config to fetch hyperparameters relevant to this run
     max_epochs = context.run_config["max-epochs"]
-    return FlowerClient(train_loader, val_loader, test_loader, max_epochs).to_client()
+    return FlowerClient(train_loader, val_loader, test_loader, max_epochs, model_name=context.run_config["model-name"], dataset_name=dataset_name).to_client()
 
 
 app = ClientApp(client_fn=client_fn)
