@@ -15,6 +15,9 @@ from flwr.server.strategy import FedAvg
 from flwr.common.logger import log
 from src.task import NERLightningModule, get_parameters
 
+# import os
+# os.environ["GRPC_VERBOSITY"] = "debug"
+
 class FedAvgNoFail(FedAvg):
     def aggregate_fit(
         self,
@@ -23,8 +26,9 @@ class FedAvgNoFail(FedAvg):
         failures: list[Union[tuple[ClientProxy, FitRes], BaseException]],
     ) -> tuple[Optional[Parameters], dict[str, Scalar]]:
         """Aggregate fit results using weighted average."""
-        log(INFO, "Received failures:")
-        log(INFO, failures)
+        if len(failures) > 0:
+            log(INFO, "Received failures. Reraising the first one:")
+            raise failures[0]
         if not results:
             return None, {}
         # Do not aggregate if there are failures and failures are not accepted
