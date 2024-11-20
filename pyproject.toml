@@ -17,7 +17,8 @@ dependencies = [
     "datasets==2.21.0",
     "conllu==6.0.0",
     "transformers==4.46.2",
-    "seqeval==1.2.2"
+    "seqeval==1.2.2",
+    "wandb==0.18.7",
 ]
 
 [tool.hatch.build.targets.wheel]
