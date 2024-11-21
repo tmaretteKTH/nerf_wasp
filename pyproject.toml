@@ -37,9 +37,14 @@ clientapp = "src.client_app:app"
 [tool.flwr.app.config]
 num-server-rounds = 1
 max-epochs = 1
+model-name = "distilbert/distilbert-base-multilingual-cased"
 
 [tool.flwr.federations]
 default = "local-simulation-gpu"
+
+[tool.flwr.federations.local-simulation]
+options.num-supernodes = 2
+options.backend.client-resources.num-cpus = 1
 
 [tool.flwr.federations.local-simulation-gpu]
 options.num-supernodes = 2

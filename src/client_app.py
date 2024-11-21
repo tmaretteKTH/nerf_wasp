@@ -21,7 +21,7 @@ from src.task import (
 DATA_NAMES = ["da_ddt", "sv_talbanken", "nno_norne", "nob_norne"]
 
 class FlowerClient(NumPyClient):
-    def __init__(self, train_loader, val_loader, test_loader, max_epochs, model_name=None, dataset_name=None):
+    def __init__(self, train_loader, val_loader, test_loader, max_epochs, model_name, dataset_name):
         self.model = NERLightningModule(model_name=model_name)
         self.train_loader = train_loader
         self.val_loader = val_loader
@@ -60,26 +60,22 @@ class FlowerClient(NumPyClient):
 
 def client_fn(context: Context) -> Client:
     """Construct a Client that will be run in a ClientApp."""
-    # raise ValueError("Can you see this?") # can't
-    logger = logging.getLogger('client_app')
-    logger.setLevel(logging.DEBUG)
-    # create file handler which logs even debug messages
-    fh = logging.FileHandler('client_app.log')
-    fh.setLevel(logging.DEBUG)
-    logger.addHandler(fh)
-    logger.debug('Client initialized')
-
-    logger = logging.getLogger("flwr")
-    logger.error("Test from client")
+    logger = logging.getLogger("flower")
+    logger.info("Test from client")
     # Read the node_config to fetch data partition associated to this node
     partition_id = context.node_config["partition-id"]
     
+    model_name = "distilbert/distilbert-base-multilingual-cased"
+    if "model-name" in context.run_config:
+        model_name = context.run_config["model-name"]
     dataset_name = DATA_NAMES[partition_id]
-    train_loader, val_loader, test_loader = load_data(dataset_name, model_name=context.run_config["model-name"])
+    train_loader, val_loader, test_loader = load_data(dataset_name, model_name=model_name)
 
     # Read run_config to fetch hyperparameters relevant to this run
-    max_epochs = context.run_config["max-epochs"]
-    return FlowerClient(train_loader, val_loader, test_loader, max_epochs, model_name=context.run_config["model-name"], dataset_name=dataset_name).to_client()
+    max_epochs = 1
+    if "max-epochs" in context.run_config:
+        max_epochs = context.run_config["max-epochs"]
+    return FlowerClient(train_loader, val_loader, test_loader, max_epochs, model_name=model_name, dataset_name=dataset_name).to_client()
 
 
 app = ClientApp(client_fn=client_fn)

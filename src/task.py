@@ -19,7 +19,7 @@ logging.getLogger("pytorch_lightning").setLevel(logging.WARNING)
 
 class NERLightningModule(pl.LightningModule):
     
-    def __init__(self, model_name="FacebookAI/xlm-roberta-large", num_labels=7, learning_rate=2e-5) -> None:
+    def __init__(self, model_name="distilbert/distilbert-base-multilingual-cased", num_labels=7, learning_rate=2e-5) -> None:
         super().__init__()
         self.model = AutoModelForTokenClassification.from_pretrained(model_name, num_labels=num_labels) 
         self.learning_rate = learning_rate
