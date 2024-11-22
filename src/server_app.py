@@ -31,7 +31,7 @@ class FedAvgNoFail(FedAvg):
         if not results:
             return None, {}
 
-        return self.super.aggregate_fit(server_round, results, failures)
+        return super().aggregate_fit(server_round, results, failures)
     
     def aggregate_evaluate(
         self,
@@ -47,7 +47,7 @@ class FedAvgNoFail(FedAvg):
         if not results:
             return None, {}
         
-        return self.super.aggregate_evaluate(server_round, results, failures)
+        return super().aggregate_evaluate(server_round, results, failures)
 
 def server_fn(context: Context) -> ServerAppComponents:
     """Construct components for ServerApp."""
