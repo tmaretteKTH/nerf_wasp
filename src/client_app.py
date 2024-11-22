@@ -1,5 +1,6 @@
 """pytorchlightning_example: A Flower / PyTorch Lightning app."""
 
+import os
 import logging
 from logging import INFO, DEBUG, ERROR
 import torch
@@ -64,6 +65,9 @@ def client_fn(context: Context) -> Client:
     logger.info("Test from client")
     # Read the node_config to fetch data partition associated to this node
     partition_id = context.node_config["partition-id"]
+
+    print(f"Client {partition_id}: Number of GPUs visible: {torch.cuda.device_count()}")
+    print(f"Client {partition_id}: CUDA_VISIBLE_DEVICES={os.environ.get('CUDA_VISIBLE_DEVICES')}")
     
     model_name = "distilbert/distilbert-base-multilingual-cased"
     if "model-name" in context.run_config:
