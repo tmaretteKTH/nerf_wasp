@@ -75,7 +75,9 @@ def set_parameters(model, parameters):
 
 def load_data(dataset_name, batch_size=32, num_workers=8, model_name="FacebookAI/xlm-roberta-large"):
     # Select the unique dataset for this client
-    partition = load_dataset('universalner/universal_ner', dataset_name, trust_remote_code=True)
+    #partition = load_dataset('universalner/universal_ner', dataset_name, trust_remote_code=True)
+    #'universalner/universal_ner' does not include Norwegian
+    partition = load_dataset("K2triinK/universal_ner_nordic_FL", dataset_name , trust_remote_code=True)
     tokenizer = AutoTokenizer.from_pretrained(model_name)
     
     # Tokenize the dataset
