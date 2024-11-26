@@ -24,6 +24,7 @@ class NERLightningModule(pl.LightningModule):
         self.model = AutoModelForTokenClassification.from_pretrained(model_name, num_labels=num_labels) 
         self.learning_rate = learning_rate
         self.metric = load_metric("seqeval", trust_remote_code=True)
+        self.label_list = ["O", "B-PER", "I-PER", "B-ORG","I-ORG","B-LOC", "I-LOC"]
         
     def forward(self, input_ids, attention_mask, labels=None) -> Any:
         return self.model(input_ids, attention_mask=attention_mask, labels=labels)
@@ -39,7 +40,20 @@ class NERLightningModule(pl.LightningModule):
         loss = outputs.loss
         logits = outputs.logits
         predictions = torch.argmax(logits, dim=-1)
-        self.metric.add_batch(predictions=predictions, references=batch["labels"])
+        labels = batch["labels"]
+
+        #Preprocess predictions and labels before calling seqeval
+        # Remove ignored index (-100)
+        true_predictions = [
+            [self.label_list[p] for (p, l) in zip(prediction, label) if l != -100]
+            for prediction, label in zip(predictions, labels)
+        ]
+        true_labels = [
+            [self.label_list[l] for (p, l) in zip(prediction, label) if l != -100]
+            for prediction, label in zip(predictions, labels)
+        ]
+
+        self.metric.add_batch(predictions=true_predictions, references=true_labels)
         if stage:
             self.log(f"{stage}_loss", loss, prog_bar=True)
     
@@ -49,7 +63,33 @@ class NERLightningModule(pl.LightningModule):
         
     def validation_epoch_end(self, outputs):
         metrics = self.metric.compute()
+
+        #Overall results
         self.log("val_f1", metrics["overall_f1"], prog_bar=True)
+        self.log("val_precision", metrics["overall_precision"], prog_bar=True)
+        self.log("val_recall", metrics["overall_recall"], prog_bar=True)
+        #Person
+        try:
+            self.log("PER_val_f1", metrics["PER"]["f1"], prog_bar=True)
+            self.log("PER_val_precision", metrics["PER"]["precision"], prog_bar=True)
+            self.log("PER_val_recall", metrics["PER"]["recall"], prog_bar=True)
+        except KeyError:
+            pass
+        #Organization
+        try:
+            self.log("ORG_val_f1", metrics["ORG"]["f1"], prog_bar=True)
+            self.log("ORG_val_precision", metrics["ORG"]["precision"], prog_bar=True)
+            self.log("ORG_val_recall", metrics["ORG"]["recall"], prog_bar=True)
+        except KeyError:
+            pass
+        #Location
+        try:
+            self.log("LOC_val_f1", metrics["LOC"]["f1"], prog_bar=True)
+            self.log("LOC_val_precision", metrics["LOC"]["precision"], prog_bar=True)
+            self.log("LOC_val_recall", metrics["LOC"]["recall"], prog_bar=True)
+        except KeyError:
+            pass
+        
 
     def test_step(self, batch, batch_idx):
         self._evaluate(batch, batch_idx, "test")
@@ -58,7 +98,32 @@ class NERLightningModule(pl.LightningModule):
     def test_epoch_end(self, outputs):
         # Calculate metrics over the entire test set
         metrics = self.metric.compute()
-        self.log("test_f1", metrics["overall_f1"], prog_bar=True)    
+
+        #Overall results
+        self.log("test_f1", metrics["overall_f1"], prog_bar=True)
+        self.log("test_precision", metrics["overall_precision"], prog_bar=True)
+        self.log("test_recall", metrics["overall_recall"], prog_bar=True)
+        #Person
+        try:
+            self.log("PER_test_f1", metrics["PER"]["f1"], prog_bar=True)
+            self.log("PER_test_precision", metrics["PER"]["precision"], prog_bar=True)
+            self.log("PER_test_recall", metrics["PER"]["recall"], prog_bar=True)
+        except KeyError:
+            pass
+        #Organization
+        try:
+            self.log("ORG_test_f1", metrics["ORG"]["f1"], prog_bar=True)
+            self.log("ORG_test_precision", metrics["ORG"]["precision"], prog_bar=True)
+            self.log("ORG_test_recall", metrics["ORG"]["recall"], prog_bar=True)
+        except KeyError:
+            pass
+        #Location
+        try:
+            self.log("LOC_test_f1", metrics["LOC"]["f1"], prog_bar=True)
+            self.log("LOC_test_precision", metrics["LOC"]["precision"], prog_bar=True)
+            self.log("LOC_test_recall", metrics["LOC"]["recall"], prog_bar=True)
+        except KeyError:
+            pass
 
     def configure_optimizers(self):
         return torch.optim.AdamW(self.parameters(), lr=self.learning_rate)
