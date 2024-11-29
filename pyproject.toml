@@ -40,7 +40,7 @@ max-epochs = 1
 model-name = "FacebookAI/xlm-roberta-base"
 
 [tool.flwr.federations]
-default = "local-simulation-gpu"
+default = "local-simulation-gpu-all"
 
 [tool.flwr.federations.local-simulation]
 options.num-supernodes = 2
@@ -48,6 +48,11 @@ options.backend.client-resources.num-cpus = 1
 
 [tool.flwr.federations.local-simulation-gpu]
 options.num-supernodes = 2
+options.backend.client-resources.num-cpus = 1
+options.backend.client-resources.num-gpus = 1
+
+[tool.flwr.federations.local-simulation-gpu-all]
+options.num-supernodes = 4
 options.backend.client-resources.num-cpus = 1
 options.backend.client-resources.num-gpus = 1
 

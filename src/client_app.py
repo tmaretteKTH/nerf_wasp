@@ -33,7 +33,11 @@ class FlowerClient(NumPyClient):
         
         wandb_logger = WandbLogger(project="nerf_wasp", name=f"{self.dataset_name}")
         wandb_logger.experiment.config.update({"model": self.model_name})
-        self.trainer = pl.Trainer(max_epochs=self.max_epochs, logger=wandb_logger, accelerator="auto", enable_progress_bar=True)
+        self.trainer = pl.Trainer(max_epochs=self.max_epochs, 
+                                  logger=wandb_logger, 
+                                  accelerator="auto", 
+                                  enable_checkpointing=False,
+                                  enable_progress_bar=True)
         
         # Determine device
         self.device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")

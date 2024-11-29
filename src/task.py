@@ -19,9 +19,13 @@ logging.getLogger("pytorch_lightning").setLevel(logging.WARNING)
 
 class NERLightningModule(pl.LightningModule):
     
-    def __init__(self, model_name="distilbert/distilbert-base-multilingual-cased", num_labels=7, learning_rate=2e-5) -> None:
+    def __init__(self, 
+                 model_name="distilbert/distilbert-base-multilingual-cased", 
+                 cache_dir="/mimer/NOBACKUP/groups/naiss2024-22-1455/project-data/nerf_wasp/.cache", 
+                 num_labels=7, 
+                 learning_rate=2e-5) -> None:
         super().__init__()
-        self.model = AutoModelForTokenClassification.from_pretrained(model_name, num_labels=num_labels) 
+        self.model = AutoModelForTokenClassification.from_pretrained(model_name, cache_dir=cache_dir, num_labels=num_labels) 
         self.learning_rate = learning_rate
         self.metric = load_metric("seqeval", trust_remote_code=True)
         self.label_list = ["O", "B-PER", "I-PER", "B-ORG","I-ORG","B-LOC", "I-LOC"]
@@ -138,11 +142,11 @@ def set_parameters(model, parameters):
     state_dict = OrderedDict({k: torch.Tensor(v) for k, v in params_dict})
     model.load_state_dict(state_dict, strict=True)
 
-def load_data(dataset_name, batch_size=32, num_workers=8, model_name="FacebookAI/xlm-roberta-large"):
+def load_data(dataset_name, batch_size=32, num_workers=8, model_name="FacebookAI/xlm-roberta-large", cache_dir="/mimer/NOBACKUP/groups/naiss2024-22-1455/project-data/nerf_wasp/.cache"):
     # Select the unique dataset for this client
     #partition = load_dataset('universalner/universal_ner', dataset_name, trust_remote_code=True)
     #'universalner/universal_ner' does not include Norwegian
-    partition = load_dataset("K2triinK/universal_ner_nordic_FL", dataset_name , trust_remote_code=True)
+    partition = load_dataset("K2triinK/universal_ner_nordic_FL", dataset_name, cache_dir=cache_dir, trust_remote_code=True)
     tokenizer = AutoTokenizer.from_pretrained(model_name)
     
     # Tokenize the dataset
