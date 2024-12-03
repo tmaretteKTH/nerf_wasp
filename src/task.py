@@ -12,6 +12,10 @@ from torch.utils.data import DataLoader
 from transformers import AutoTokenizer, AutoModelForTokenClassification
 from datasets import load_metric, load_dataset
 from datasets.utils.logging import disable_progress_bar
+from transformers import get_linear_schedule_with_warmup
+
+MAX_SAMPLES_PER_ROUND = 4300 # tuned to ddt and talbanken
+BATCH_SIZE = 32
 
 disable_progress_bar()
 
@@ -29,6 +33,7 @@ class NERLightningModule(pl.LightningModule):
         self.learning_rate = learning_rate
         self.metric = load_metric("seqeval", trust_remote_code=True)
         self.label_list = ["O", "B-PER", "I-PER", "B-ORG","I-ORG","B-LOC", "I-LOC"]
+        self.current_round = 0
         
     def forward(self, input_ids, attention_mask, labels=None) -> Any:
         return self.model(input_ids, attention_mask=attention_mask, labels=labels)
@@ -130,7 +135,27 @@ class NERLightningModule(pl.LightningModule):
             pass
 
     def configure_optimizers(self):
-        return torch.optim.AdamW(self.parameters(), lr=self.learning_rate)
+        optimizer = torch.optim.AdamW(self.parameters(), lr=self.learning_rate)
+        # roberta used a linear warmup for first 6% steps over a total of 10 epochs (with early stopping)
+        total_number_of_epochs = 10
+        warmup_share = 0.06
+        num_steps_per_round = int(MAX_SAMPLES_PER_ROUND/BATCH_SIZE)
+        total_number_of_steps = int(total_number_of_epochs*num_steps_per_round)
+        num_warmup_steps = int(total_number_of_steps*warmup_share)
+        lr_scheduler = get_linear_schedule_with_warmup(optimizer, num_warmup_steps=num_warmup_steps, num_training_steps=total_number_of_steps)
+        
+        # update the train scheduler to the current round (starts from 1)
+        for _ in range((self.current_round-1)*num_steps_per_round):
+            lr_scheduler.step()
+            
+        return {
+            "optimizer": optimizer,
+            "lr_scheduler": {
+                "scheduler": lr_scheduler,
+                "interval": "step",
+                "frequency": 1
+            }
+        }
 
 
 def get_parameters(model):

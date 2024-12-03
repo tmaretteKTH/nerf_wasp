@@ -49,6 +49,15 @@ class FedAvgNoFail(FedAvg):
         
         return super().aggregate_evaluate(server_round, results, failures)
 
+def fit_config(server_round: int):
+    """Return training configuration dict for each round.
+
+    """
+    config = {
+        "current_round": server_round,
+    }
+    return config
+
 def server_fn(context: Context) -> ServerAppComponents:
     """Construct components for ServerApp."""
     log(INFO, f"Starting server with run context: {context}")
@@ -65,7 +74,8 @@ def server_fn(context: Context) -> ServerAppComponents:
         fraction_fit=1.0,
         fraction_evaluate=1.0,
         initial_parameters=global_model_init,
-        accept_failures=False
+        accept_failures=False,
+        on_fit_config_fn=fit_config
     )
 
     # Construct ServerConfig

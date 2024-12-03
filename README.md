@@ -38,6 +38,10 @@ python src/run_baseline.py --train_datasets da_ddt sv_talbanken --test_dataset d
 ```
 The datasets available are the following: da_ddt, sv_talbanken, nno_norne, nob_norne
 
+### Run batch job on Alvis
+
+Use [scripts/alvis_roberta_base_all_dsets.sh](scripts/alvis_roberta_base_all_dsets.sh).
+
 ## Run tests using pytest
 
 ```bash

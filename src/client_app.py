@@ -5,17 +5,21 @@ import logging
 from logging import INFO, DEBUG, ERROR
 import torch
 import pytorch_lightning as pl
+from pytorch_lightning.callbacks import LearningRateMonitor
 import flwr
 from flwr.client import Client, ClientApp, NumPyClient
 from flwr.common import Context
 from flwr.common.logger import log
 from pytorch_lightning.loggers import WandbLogger
+from pytorch_lightning.callbacks.early_stopping import EarlyStopping
 
 from src.task import (
     NERLightningModule,
     get_parameters,
     load_data,
     set_parameters,
+    MAX_SAMPLES_PER_ROUND,
+    BATCH_SIZE
 )
 
 # "sv_pud"
@@ -33,9 +37,15 @@ class FlowerClient(NumPyClient):
         
         wandb_logger = WandbLogger(project="nerf_wasp", name=f"{self.dataset_name}")
         wandb_logger.experiment.config.update({"model": self.model_name})
+        lr_monitor = LearningRateMonitor(logging_interval='step')
+        max_steps = int(MAX_SAMPLES_PER_ROUND/BATCH_SIZE+1)
         self.trainer = pl.Trainer(max_epochs=self.max_epochs, 
+                                  max_steps=max_steps,
                                   logger=wandb_logger, 
                                   accelerator="auto", 
+                                  callbacks=[lr_monitor, EarlyStopping(monitor="val_loss", mode="min", patience=3)],
+                                  log_every_n_steps=int(0.1*max_steps),
+                                  val_check_interval=int(0.2*max_steps),
                                   enable_checkpointing=False,
                                   enable_progress_bar=True)
         
@@ -46,9 +56,11 @@ class FlowerClient(NumPyClient):
 
     def fit(self, parameters, config):
         """Train the model with data of this client."""
+        # update the train scheduler to the current round
+        self.model.current_round = config["current_round"]
+            
         set_parameters(self.model, parameters)
-        
-        log(INFO, f"Client is doing fit() with config: {config}")
+        log(DEBUG, f"Client is doing fit() with config: {config}")
         self.trainer.fit(self.model.to(self.device), self.train_loader, self.val_loader)
 
         return get_parameters(self.model), len(self.train_loader.dataset), {}
@@ -65,8 +77,6 @@ class FlowerClient(NumPyClient):
 
 def client_fn(context: Context) -> Client:
     """Construct a Client that will be run in a ClientApp."""
-    logger = logging.getLogger("flower")
-    logger.info("Test from client")
     # Read the node_config to fetch data partition associated to this node
     partition_id = context.node_config["partition-id"]
 
@@ -77,7 +87,7 @@ def client_fn(context: Context) -> Client:
     if "model-name" in context.run_config:
         model_name = context.run_config["model-name"]
     dataset_name = DATA_NAMES[partition_id]
-    train_loader, val_loader, test_loader = load_data(dataset_name, model_name=model_name)
+    train_loader, val_loader, test_loader = load_data(dataset_name, model_name=model_name, batch_size=BATCH_SIZE)
 
     # Read run_config to fetch hyperparameters relevant to this run
     max_epochs = 1
