@@ -6,10 +6,13 @@ from torch.utils.data import DataLoader
 import pytorch_lightning as pl
 from pytorch_lightning.loggers import WandbLogger
 from datasets import concatenate_datasets
+from pytorch_lightning.callbacks import LearningRateMonitor
+from pytorch_lightning.callbacks.early_stopping import EarlyStopping
 
 from task import (
     NERLightningModule,
-    load_data
+    load_data,
+    NUM_STEPS_PER_ROUND
 )
 
 logging.basicConfig(level=INFO)
@@ -18,7 +21,7 @@ logging.basicConfig(level=INFO)
 DATA_NAMES = ["da_ddt", "sv_talbanken", "nno_norne", "nob_norne"]
 
 def run(model_name = "FacebookAI/xlm-roberta-base", train_datasets = DATA_NAMES, test_dataset = "da_ddt",
-        max_epochs = 1) -> None:
+        max_epochs = 10) -> None:
     
     print("Training on the following datasets:", train_datasets)
     print("Testing on the following dataset:", test_dataset)
@@ -38,19 +41,28 @@ def run(model_name = "FacebookAI/xlm-roberta-base", train_datasets = DATA_NAMES,
     _, val_loader, test_loader = load_data(test_dataset, model_name=model_name)
 
     #Prepare model
-    model = NERLightningModule(model_name=model_name)
+    model = NERLightningModule(model_name=model_name, mode="baseline")
 
     wandb_logger = WandbLogger(project="nerf_wasp", name=f"baseline_{'_'.join(train_datasets)}_{test_dataset}")
     wandb_logger.experiment.config.update({"model": model_name, "train_data": train_datasets,
                                             "test_data": test_dataset})
-    
-    trainer = pl.Trainer(max_epochs=max_epochs, 
-                                  logger=wandb_logger, 
-                                  accelerator="auto", 
-                                  enable_checkpointing=False,
-                                  enable_progress_bar=True)
-        
+    lr_monitor = LearningRateMonitor(logging_interval='step')
 
+
+    trainer = pl.Trainer(max_epochs=max_epochs,
+                        logger=wandb_logger,
+                        accelerator="auto",
+                        callbacks=[
+                                    lr_monitor, 
+                                    EarlyStopping(monitor="val_loss", mode="min", patience=3)
+                                    ],
+                        log_every_n_steps=int(0.1 * NUM_STEPS_PER_ROUND),
+                        val_check_interval=int(0.2 * NUM_STEPS_PER_ROUND),
+                        enable_checkpointing=False,
+                        enable_progress_bar=True,
+                        limit_train_batches=NUM_STEPS_PER_ROUND
+                        )
+        
     trainer.fit(model=model, 
                 train_dataloaders=train_loader, 
                 val_dataloaders = val_loader)
@@ -68,12 +80,10 @@ if __name__ == "__main__":
     parser.add_argument("--train_datasets", type=str, nargs="+", default=["da_ddt"], help="Train datasets, list of strings")
     parser.add_argument("--test_dataset", type=str, default="da_ddt", help="Test dataset")
     parser.add_argument("--model_name", type=str, default="FacebookAI/xlm-roberta-base", help="Model name")
-    parser.add_argument("--max_epochs", type=int, default=1, help="Maximum number of epochs")
 
     # Parse arguments
     args = parser.parse_args()
 
     run(model_name = args.model_name, 
         train_datasets = args.train_datasets, 
-        test_dataset = args.test_dataset,
-        max_epochs = args.max_epochs)
+        test_dataset = args.test_dataset)

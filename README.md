@@ -29,12 +29,12 @@ flwr run .
 Make sure the virtual environment is activated and then use for example: 
 
 ```bash
-python src/run_baseline.py --train_datasets da_ddt --test_dataset da_ddt --max_epochs 1
+python src/run_baseline.py --train_datasets da_ddt --test_dataset da_ddt
 ```
 It is also possible to specify several training datasets like this:
 
 ```bash
-python src/run_baseline.py --train_datasets da_ddt sv_talbanken --test_dataset da_ddt --max_epochs 1
+python src/run_baseline.py --train_datasets da_ddt sv_talbanken --test_dataset da_ddt
 ```
 The datasets available are the following: da_ddt, sv_talbanken, nno_norne, nob_norne
 

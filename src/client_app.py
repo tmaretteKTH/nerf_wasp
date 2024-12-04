@@ -18,8 +18,8 @@ from src.task import (
     get_parameters,
     load_data,
     set_parameters,
-    MAX_SAMPLES_PER_ROUND,
-    BATCH_SIZE
+    BATCH_SIZE,
+    NUM_STEPS_PER_ROUND
 )
 
 # "sv_pud"
@@ -38,14 +38,13 @@ class FlowerClient(NumPyClient):
         wandb_logger = WandbLogger(project="nerf_wasp", name=f"{self.dataset_name}")
         wandb_logger.experiment.config.update({"model": self.model_name})
         lr_monitor = LearningRateMonitor(logging_interval='step')
-        max_steps = int(MAX_SAMPLES_PER_ROUND/BATCH_SIZE+1)
         self.trainer = pl.Trainer(max_epochs=self.max_epochs, 
-                                  max_steps=max_steps,
+                                  max_steps=NUM_STEPS_PER_ROUND,
                                   logger=wandb_logger, 
                                   accelerator="auto", 
                                   callbacks=[lr_monitor, EarlyStopping(monitor="val_loss", mode="min", patience=3)],
-                                  log_every_n_steps=int(0.1*max_steps),
-                                  val_check_interval=int(0.2*max_steps),
+                                  log_every_n_steps=int(0.1*NUM_STEPS_PER_ROUND),
+                                  val_check_interval=int(0.2*NUM_STEPS_PER_ROUND),
                                   enable_checkpointing=False,
                                   enable_progress_bar=True)
         
