@@ -6,7 +6,7 @@ from torch.utils.data import DataLoader
 import pytorch_lightning as pl
 from pytorch_lightning.loggers import WandbLogger
 from datasets import concatenate_datasets
-from pytorch_lightning.callbacks import LearningRateMonitor
+from pytorch_lightning.callbacks import Callback, LearningRateMonitor
 from pytorch_lightning.callbacks.early_stopping import EarlyStopping
 
 from task import (
@@ -19,6 +19,23 @@ logging.basicConfig(level=INFO)
 
 # "sv_pud"
 DATA_NAMES = ["da_ddt", "sv_talbanken", "nno_norne", "nob_norne"]
+
+# Callback for recreating and shuffling the DataLoader at the beginning of each epoch
+class ShuffleDataLoaderCallback(Callback):
+    def __init__(self, train_loader):
+        self.train_loader = train_loader
+
+    def on_train_epoch_start(self, trainer, pl_module):
+        # Recreate DataLoader with shuffled dataset
+        new_train_loader = DataLoader(
+            dataset=self.train_loader.dataset,
+            batch_size=self.train_loader.batch_size,
+            shuffle=True,  # Ensure data is shuffled
+            num_workers=self.train_loader.num_workers,
+        )
+        
+        trainer.fit_loop._data_loader_iter = iter(new_train_loader)
+
 
 def run(model_name = "FacebookAI/xlm-roberta-base", train_datasets = DATA_NAMES, test_dataset = "da_ddt",
         max_epochs = 10) -> None:
@@ -47,6 +64,7 @@ def run(model_name = "FacebookAI/xlm-roberta-base", train_datasets = DATA_NAMES,
     wandb_logger.experiment.config.update({"model": model_name, "train_data": train_datasets,
                                             "test_data": test_dataset})
     lr_monitor = LearningRateMonitor(logging_interval='step')
+    shuffle_callback = ShuffleDataLoaderCallback(train_loader)
 
 
     trainer = pl.Trainer(max_epochs=max_epochs,
@@ -54,7 +72,8 @@ def run(model_name = "FacebookAI/xlm-roberta-base", train_datasets = DATA_NAMES,
                         accelerator="auto",
                         callbacks=[
                                     lr_monitor, 
-                                    EarlyStopping(monitor="val_loss", mode="min", patience=3)
+                                    EarlyStopping(monitor="val_loss", mode="min", patience=3),
+                                    shuffle_callback
                                     ],
                         log_every_n_steps=int(0.1 * NUM_STEPS_PER_ROUND),
                         val_check_interval=int(0.2 * NUM_STEPS_PER_ROUND),
