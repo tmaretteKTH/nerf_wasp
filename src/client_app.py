@@ -86,6 +86,7 @@ def client_fn(context: Context) -> Client:
     if "model-name" in context.run_config:
         model_name = context.run_config["model-name"]
     dataset_name = DATA_NAMES[partition_id]
+    print(f"Client with PID {os.getpid()} is using partition ID {partition_id} and dataset {dataset_name}")
     train_loader, val_loader, test_loader = load_data(dataset_name, model_name=model_name, batch_size=BATCH_SIZE)
 
     # Read run_config to fetch hyperparameters relevant to this run

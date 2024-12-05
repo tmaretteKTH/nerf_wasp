@@ -46,8 +46,11 @@ class FedAvgNoFail(FedAvg):
             raise failures[0]
         if not results:
             return None, {}
-        
-        return super().aggregate_evaluate(server_round, results, failures)
+
+        aggregated_metrics= super().aggregate_evaluate(server_round, results, failures)
+        aggregated_loss, _ = aggregated_metrics
+        log(INFO, f"Round {server_round}, aggregated loss: {aggregated_loss}")
+        return aggregated_metrics
 
 def fit_config(server_round: int):
     """Return training configuration dict for each round.
