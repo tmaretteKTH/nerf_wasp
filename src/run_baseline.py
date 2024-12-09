@@ -20,6 +20,14 @@ logging.basicConfig(level=INFO)
 # "sv_pud"
 DATA_NAMES = ["da_ddt", "sv_talbanken", "nno_norne", "nob_norne"]
 
+class BaselineNERLightningModule(NERLightningModule):
+    def validation_step(self, batch, batch_idx, dataloader_idx=0):
+        if dataloader_idx == 0:
+            self._evaluate(batch, batch_idx, "val")
+        else:
+            dataset_name = self.trainer.val_dataloaders[dataloader_idx].dataset.name
+            self._evaluate(batch, batch_idx, f"{dataset_name}_val")
+
 # Callback for recreating and shuffling the DataLoader at the beginning of each epoch
 class ShuffleDataLoaderCallback(Callback):
     def __init__(self, train_loader):
@@ -38,7 +46,7 @@ class ShuffleDataLoaderCallback(Callback):
 
 
 def run(model_name = "FacebookAI/xlm-roberta-base", train_datasets = DATA_NAMES, test_dataset = "da_ddt",
-        max_epochs = 10) -> None:
+        max_epochs = 10, monitor_all_val_losses = True) -> None:
     
     print("Training on the following datasets:", train_datasets)
     print("Testing on the following dataset:", test_dataset)
@@ -57,10 +65,20 @@ def run(model_name = "FacebookAI/xlm-roberta-base", train_datasets = DATA_NAMES,
     
     _, val_loader, test_loader = load_data(test_dataset, model_name=model_name)
 
-    #Prepare model
-    model = NERLightningModule(model_name=model_name, mode="baseline")
+    if monitor_all_val_losses:
+        # Additional validation datasets
+        additional_val_datasets = [dataset for dataset in DATA_NAMES if dataset != test_dataset]
+        additional_val_loaders = [load_data(name, model_name=model_name)[1] for name in additional_val_datasets]
+        all_val_loaders = [val_loader] + additional_val_loaders
+        wandb_run_name = f"baseline_{'_'.join(train_datasets)}_{test_dataset}_monitor_all_val_losses"
+        early_stopping_criteria = "val_loss/dataloader_idx_0"
+        model = BaselineNERLightningModule(model_name=model_name, mode="baseline")
+    else:
+        wandb_run_name = f"baseline_{'_'.join(train_datasets)}_{test_dataset}"
+        early_stopping_criteria = "val_loss"
+        model = NERLightningModule(model_name=model_name, mode="baseline")
 
-    wandb_logger = WandbLogger(project="nerf_wasp", name=f"baseline_{'_'.join(train_datasets)}_{test_dataset}")
+    wandb_logger = WandbLogger(project="nerf_wasp", name=wandb_run_name)
     wandb_logger.experiment.config.update({"model": model_name, "train_data": train_datasets,
                                             "test_data": test_dataset})
     lr_monitor = LearningRateMonitor(logging_interval='step')
@@ -72,7 +90,7 @@ def run(model_name = "FacebookAI/xlm-roberta-base", train_datasets = DATA_NAMES,
                         accelerator="auto",
                         callbacks=[
                                     lr_monitor, 
-                                    EarlyStopping(monitor="val_loss", mode="min", patience=3),
+                                    EarlyStopping(monitor=early_stopping_criteria, mode="min", patience=3),
                                     shuffle_callback
                                     ],
                         log_every_n_steps=int(0.1 * NUM_STEPS_PER_ROUND),
@@ -81,10 +99,15 @@ def run(model_name = "FacebookAI/xlm-roberta-base", train_datasets = DATA_NAMES,
                         enable_progress_bar=True,
                         limit_train_batches=NUM_STEPS_PER_ROUND
                         )
-        
-    trainer.fit(model=model, 
-                train_dataloaders=train_loader, 
-                val_dataloaders = val_loader)
+    
+    if monitor_all_val_losses:
+        trainer.fit(model=model, 
+                    train_dataloaders=train_loader, 
+                    val_dataloaders = all_val_loaders)
+    else:
+        trainer.fit(model=model, 
+                    train_dataloaders=train_loader, 
+                    val_dataloaders = val_loader)
     
     # Test model
     trainer.test(model=model, dataloaders=test_loader)
@@ -99,10 +122,12 @@ if __name__ == "__main__":
     parser.add_argument("--train_datasets", type=str, nargs="+", default=["da_ddt"], help="Train datasets, list of strings")
     parser.add_argument("--test_dataset", type=str, default="da_ddt", help="Test dataset")
     parser.add_argument("--model_name", type=str, default="FacebookAI/xlm-roberta-base", help="Model name")
+    parser.add_argument("--monitor_all_val_losses", action="store_true", default=True, help="Whether you wish to monitor the val loss for all 4 datasets")
 
     # Parse arguments
     args = parser.parse_args()
 
     run(model_name = args.model_name, 
         train_datasets = args.train_datasets, 
-        test_dataset = args.test_dataset)
+        test_dataset = args.test_dataset,
+        monitor_all_val_losses = args.monitor_all_val_losses)

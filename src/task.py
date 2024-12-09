@@ -207,6 +207,11 @@ def load_data(dataset_name, batch_size=32, num_workers=8, model_name="FacebookAI
     tokenized_test_partition = partition["test"].map(tokenize_and_align_labels, remove_columns=["idx", "text", "tokens", "ner_tags", "annotator"], batched=True)
     tokenized_test_partition.set_format('torch', columns=['input_ids', 'attention_mask', 'labels'])
 
+    # Attach dataset name to each partition
+    tokenized_train_partition.name = dataset_name
+    tokenized_val_partition.name = dataset_name
+    tokenized_test_partition.name = dataset_name
+    
     # Create data loaders for each split
     train_loader = DataLoader(
         tokenized_train_partition,
