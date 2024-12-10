@@ -51,7 +51,7 @@ For 10 rounds with 2 clients using "FacebookAI/xlm-roberta-base" and training 1 
 ```bash
 python src/federated_learning.py
 ```
-You can specify and thus change the following: num_clients, model_name, mac_epochs, num_rounds.
+You can specify and thus change the following: num_clients, model_name, max_epochs, num_rounds.
 
 
 ### Run batch job on Alvis
