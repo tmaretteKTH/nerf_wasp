@@ -44,6 +44,16 @@ By default you will only see validation metrics for the test dataset but it is a
 python src/run_baseline.py --train_datasets da_ddt --test_dataset da_ddt --monitor_all_val_losses
 ```
 
+### Run a non-simulated setup (still several GPUs on the same machine)
+
+For 10 rounds with 2 clients using "FacebookAI/xlm-roberta-base" and training 1 epoch per round:
+
+```bash
+python src/federated_learning.py
+```
+You can specify and thus change the following: num_clients, model_name, mac_epochs, num_rounds.
+
+
 ### Run batch job on Alvis
 
 Use [scripts/alvis_roberta_base_all_dsets.sh](scripts/alvis_roberta_base_all_dsets.sh).
