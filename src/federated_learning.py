@@ -7,9 +7,10 @@ import torch
 
 logging.basicConfig(level=logging.INFO)
 
-def start_server(num_rounds, model_name):
+def start_server(num_rounds, model_name, num_clients):
     os.environ["NUM_ROUNDS"] = str(num_rounds)
     os.environ["MODEL_NAME"] = model_name
+    os.environ["NUM_CLIENTS"] = str(num_clients)
     os.system("python src/server_app_federated.py")
 
 def start_client(client_id, gpu_id, model_name, max_epochs):
@@ -41,7 +42,7 @@ if __name__ == "__main__":
 
     # Start server
     logging.info(f"Starting server with {num_rounds} rounds using model {model_name}...")
-    server_process = multiprocessing.Process(target=start_server, args=(num_rounds, model_name), daemon=True)
+    server_process = multiprocessing.Process(target=start_server, args=(num_rounds, model_name, num_clients), daemon=True)
     server_process.start()
 
     time.sleep(10)

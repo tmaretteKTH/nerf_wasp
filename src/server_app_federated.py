@@ -48,21 +48,16 @@ class FedAvgNoFail(FedAvg):
         
         return super().aggregate_evaluate(server_round, results, failures)
 
-#def fit_config(server_round: int):
-#    """Return training configuration dict for each round."""
-#    return {
-#        "current_round": server_round,
-#    }
 def fit_config(server_round: int):
+    """Return training configuration dict for each round."""
     return {
         "current_round": server_round,
-        "model_name": os.environ.get("MODEL_NAME", "FacebookAI/xlm-roberta-base"),
-        "max_epochs": int(os.environ.get("MAX_EPOCHS", 1)),
     }
-
 
 if __name__ == "__main__":
     logging.basicConfig(level=logging.INFO)
+
+    num_clients = int(os.environ.get("NUM_CLIENTS", 2))
 
     # Define the model and initialize parameters
     model_name = os.environ.get("MODEL_NAME", "FacebookAI/xlm-roberta-base")
@@ -73,7 +68,10 @@ if __name__ == "__main__":
     strategy = FedAvgNoFail(
         fraction_fit=1.0,
         fraction_evaluate=1.0,
-        initial_parameters=global_model_init,
+        initial_parameters=global_model_init,            
+        min_available_clients = num_clients,
+        min_fit_clients=num_clients,
+        min_evaluate_clients=num_clients,
         accept_failures=False,
         on_fit_config_fn=fit_config,
     )
