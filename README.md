@@ -1,6 +1,9 @@
-# nerf_wasp
+This project was done
+# NERF
 
-## Run our code 
+In this project, we implemented a federated learning setup to train a language model for named entity recognition (NER) on different languages (Swedish, Norwegian, Danish, Icelandic etc.)
+
+## Tutorial: how to run our code
 
 ### Setup
 Install the required packages (if necessary) and log in to your wandb account, as follows:
@@ -14,7 +17,8 @@ pip install -e . # you should only need to run this once
 wandb login  
 ```
 
-### Run
+
+### Run flwr
 
 Tune the run arguments, e.g. model type and number of training epochs, using [pyproject.toml](pyproject.toml). 
 
@@ -24,34 +28,26 @@ Make sure the virtual environment is activated and then use:
 flwr run .
 ```
 
-### Run baseline
+### Run a specific file
 
-Make sure the virtual environment is activated and then use for example: 
 
-```bash
-python src/run_baseline.py --train_datasets da_ddt --test_dataset da_ddt
-```
-It is also possible to specify several training datasets like this:
+
+For all the following, make sure the virtual environment is activated.
+You can run a custom python file using
 
 ```bash
-python src/run_baseline.py --train_datasets da_ddt sv_talbanken --test_dataset da_ddt
+python src/file --parameters x
 ```
-The datasets available are the following: da_ddt, sv_talbanken, nno_norne, nob_norne
+For instance,
+- `src/run_baseline`: run the baseline. You can specify `train_datasets` (one or several datasets) and `test_dataset`, among the 4 following datasets: da_ddt, sv_talbanken, nno_norne, nob_norne. It is possible to monitor the validation loss for all other variable datasets during the baseline training using `monitor_all_val_losses`.
+- `src/federated_learning.py`: run a non-simulated setup, using several GPUs on the same machine. You can specify  `num_clients`, `model_name`, `max_epochs` and `num_rounds`.
 
-By default you will only see validation metrics for the test dataset but it is also possible to monitor the validation loss for all other available datasets during baseline training:
+
+A final command can look something like this:
 
 ```bash
 python src/run_baseline.py --train_datasets da_ddt --test_dataset da_ddt --monitor_all_val_losses
 ```
-
-### Run a non-simulated setup (still several GPUs on the same machine)
-
-For 10 rounds with 2 clients using "FacebookAI/xlm-roberta-base" and training 1 epoch per round:
-
-```bash
-python src/federated_learning.py
-```
-You can specify and thus change the following: num_clients, model_name, max_epochs, num_rounds.
 
 
 ### Run batch job on Alvis
@@ -102,22 +98,4 @@ source /mimer/NOBACKUP/groups/naiss2024-22-1455/venvs/venv_example_lightning/bin
 cd quickstart-pytorch-lightning
 flwr run .
 ```
-
-## Datasets
-
-We will use [this dataset](https://huggingface.co/datasets/K2triinK/universal_ner_nordic_FL) for the project.
-
-I found this Universal NER project that came out this year. Some links: [website](https://www.universalner.org/), [research paper](https://arxiv.org/html/2311.09122v2), [git](https://github.com/UniversalNER)
-
-> Universal Named Entity Recognition (UNER) aims to fill a gap in multilingual NLP: high quality NER datasets in many languages with a shared tagset.
-> 
-> UNER is modeled after the Universal Dependencies project, in that it is intended to be a large community annotation effort with language-universal guidelines. Further, we use the same text corpora as Universal Dependencies.
-
-Basically, it seems to be what [scandiNER](https://huggingface.co/saattrupdan/nbailab-base-ner-scandi) did, but cleaner and more accessible. They used the same annotations guidelines as NorNE (dataset used by scandiNER).
-
-
-All datas are in [IOB2 format](https://en.wikipedia.org/wiki/Inside%E2%80%93outside%E2%80%93beginning_(tagging))
-
-They seem to have Swedish/Norwegian/Danish for now. We could replace Icelandic/Faroese by german?
-
 
