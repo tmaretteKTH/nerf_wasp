@@ -83,21 +83,23 @@ python src/file --parameters x
 2. Example files to run:
     - Baseline run (`src/run_baseline.py`)
     Run the baseline model. You can specify the training datasets (one or more) and the test dataset. Available datasets include:
-        - da_ddt
-        - sv_talbanken
-        - nno_norne
-        - nob_norne
+        - `da_ddt` (danish)
+        - `sv_talbanken` (swedish)
+        - `nno_norne` (norwegian)
+        - `nob_norne` (norwegian)
+          
     You can also monitor the validation loss for all datasets during baseline training using the `--monitor_all_val_losses` flag.
+   
     Usecase example:
     ```bash
     python src/run_baseline.py --train_datasets da_ddt sv_talkbanken --test_dataset da_ddt --monitor_all_val_losses
     ```
     - Federated Learning (src/federated_learning.py)
     Run a non-simulated federated learning setup using multiple GPUs on the same machine. You can specify:
-        - num_clients
-        - model_name
-        - max_epochs
-        - num_rounds
+        - `num_clients`: Number of clients (default: 2)
+        - `model_name`: Model name (default: FacebookAI/xlm-roberta-base)
+        - `max_epochs`: Number of epochs per round (default: 1)
+        - `num_rounds`: Number of communication rounds (default: 10)
 
 
 ---
