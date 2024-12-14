@@ -1,6 +1,6 @@
 # NERF Project: Federated Learning for Named Entity Recognition
 
-This project implements a federated learning setup to train a language model for Named Entity Recognition (NER) in multiple languages, including Swedish, Norwegian, Danish, Icelandic, and others.
+This project implements a federated learning setup to train a language model for Named Entity Recognition (NER) in multiple scandinavian languages: Swedish, Norwegian and Danish.
 
 ## Table of Contents
 
