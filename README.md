@@ -92,7 +92,7 @@ python src/file --parameters x
    
     Usecase example:
     ```bash
-    python src/run_baseline.py --train_datasets da_ddt sv_talkbanken --test_dataset da_ddt --monitor_all_val_losses
+    python src/run_baseline.py --train_datasets da_ddt sv_talbanken --test_dataset da_ddt --monitor_all_val_losses
     ```
     - Federated Learning (`src/federated_learning.py`)
     Run a non-simulated federated learning setup using multiple GPUs on the same machine. You can specify:
