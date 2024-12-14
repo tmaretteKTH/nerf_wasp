@@ -1,25 +1,71 @@
-# NERF
+# NERF Project: Federated Learning for Named Entity Recognition
 
-In this project, we implemented a federated learning setup to train a language model for named entity recognition (NER) on different languages (Swedish, Norwegian, Danish, Icelandic etc.)
+This project implements a federated learning setup to train a language model for Named Entity Recognition (NER) in multiple languages, including Swedish, Norwegian, Danish, Icelandic, and others.
 
-## Tutorial: how to run our code
+## Table of Contents
 
-### Setup
-Install the required packages (if necessary) and log in to your wandb account, as follows:
+1. [Setup](#setup)
+2. [Quickstart Example](#Quickstart Example)
+3. [Longer tutorial](#Longer tutorial)
+4. [Other tutorials](#Other tutorials)
+    - [Running batch jobs on Alvis](#Running batch jobs on Alvis)
+    - [Running Tests with pytest](#Running Tests with pytest)
+
+---
+
+## Setup
+
+Before running the code, ensure that the required packages are installed and you are logged into your Wandb account.
+
+1. Load required modules and activate the virtual environment:
 
 ```bash
 module purge
 module load Python/3.10.8-GCCcore-12.2.0
 source /mimer/NOBACKUP/groups/naiss2024-22-1455/venvs/venv_example_lightning/bin/activate
-
-pip install -e . # you should only need to run this once
+```
+2. Install dependencies (run only once):
+```
+pip install -e .
+```
+3. Login to Wandb:
+```
 wandb login  
 ```
+ 
+---
+
+## Quickstart Example
+
+This is the simplest example to get started with federated learning. It is designed to run on a CPU and is useful when you don't have access to a cluster. For more complete setups (which require GPU access), see the following sections.
+
+1. Download the quickstart repo:
+
+```bash
+git clone --depth=1 https://github.com/adap/flower.git _tmp \
+        && mv _tmp/examples/quickstart-pytorch-lightning . \
+        && rm -rf _tmp && cd quickstart-pytorch-lightning'
+cd quickstart-pytorch-lightning
+```
+
+2. Fix import deadlock issue:
+
+```bash
+pip install datasets==2.21.0
+```
+
+3. Run the example:
+
+```bash
+flwr run .
+```
+
+---
 
 
-### Run flwr
+## Longer tutorial
 
-Tune the run arguments, e.g. model type and number of training epochs, using [pyproject.toml](pyproject.toml). 
+For a more complete federated learning setup, tune the model type, number of training epochs, and other parameters in the `pyproject.toml` file. These examples require GPU access (e.g., via the Alvis cluster).
 
 Make sure the virtual environment is activated and then use: 
 
@@ -48,53 +94,20 @@ A final command can look something like this:
 python src/run_baseline.py --train_datasets da_ddt --test_dataset da_ddt --monitor_all_val_losses
 ```
 
+---
+
+## Other tutorial
 
 ### Run batch job on Alvis
 
+To run a batch job on the Alvis cluster, use the script provided:
+
 Use [scripts/alvis_roberta_base_all_dsets.sh](scripts/alvis_roberta_base_all_dsets.sh).
 
-## Run tests using pytest
+### Running Tests with pytest
+
+To run tests for the project, use the following command:
 
 ```bash
 python -m pytest test
 ```
-
-## Run quickstart example on Alvis
-
-Follow [this PyTorch-lightning Flower quickstart guide](https://github.com/adap/flower/tree/main/examples/quickstart-pytorch-lightning).
-
-### Set up environment
-
-> Only needs to be done once on Alvis! You should be able to go directly to "Run example".
-
-Before `pip install -e .` in the guide:
-```bash
-module purge
-module load Python/3.10.8-GCCcore-12.2.0
-python -m venv /mimer/NOBACKUP/groups/naiss2024-22-1455/venvs/venv_example_lightning
-source /mimer/NOBACKUP/groups/naiss2024-22-1455/venvs/venv_example_lightning/bin/activate
-```
-
-Small edit to avoid python import deadlock - downgrade datasets from 3.1.0 to 2.21.0.
-```bash
-cd quickstart-pytorch-lightning
-pip install -e .
-pip install datasets==2.21.0
-```
-
-From the `quickstart-pytorch-lightning` folder:
-```bash
-flwr run .
-```
-
-### Run example
-
-```bash
-module purge
-module load Python/3.10.8-GCCcore-12.2.0
-source /mimer/NOBACKUP/groups/naiss2024-22-1455/venvs/venv_example_lightning/bin/activate
-
-cd quickstart-pytorch-lightning
-flwr run .
-```
-
