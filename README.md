@@ -8,7 +8,7 @@ This project implements a federated learning setup to train a language model for
 2. [Quickstart Example](#quickstart-example)
 3. [Complete example](#complete-example)
 4. [Other tutorials](#other-tutorials)
-    - [Running batch jobs on Alvis](#running-batch-jobs-on-alvis)
+    - [Running batch job on Alvis](#running-batch-job-on-alvis)
     - [Running Tests with pytest](#running-tests-with-pytest)
 
 ---
@@ -106,7 +106,7 @@ python src/run_baseline.py --train_datasets da_ddt sv_talkbanken --test_dataset 
 
 ---
 
-## Other tutorial
+## Other tutorials
 
 ### Run batch job on Alvis
 
