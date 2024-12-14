@@ -5,17 +5,17 @@ This project implements a federated learning setup to train a language model for
 ## Table of Contents
 
 1. [Setup](#setup)
-2. [Quickstart Example](#quickstartexample)
-3. [Longer tutorial](#longertutorial)
-4. [Other tutorials](#othertutorials)
-    - [Running batch jobs on Alvis](#runningbatchjobsonalvis)
-    - [Running Tests with pytest](#runningtestswithpytest)
+2. [Quickstart Example](#quickstart-example)
+3. [Complete example](#complete-example)
+4. [Other tutorials](#other-tutorials)
+    - [Running batch jobs on Alvis](#running-batch-jobs-on-alvis)
+    - [Running Tests with pytest](#running-tests-with-pytest)
 
 ---
 
 ## Setup
 
-Before running the code, ensure that the required packages are installed and you are logged into your Wandb account.
+Before running the [quickstart Example](#quickstart-example) or the [complete example](#complete-example), ensure that the required packages are installed and you are logged into your Wandb account.
 
 1. Load required modules and activate the virtual environment:
 
@@ -39,7 +39,7 @@ wandb login
 
 This is the simplest example to get started with federated learning. It is designed to run on a CPU and is useful when you don't have access to a cluster. For more complete setups (which require GPU access), see the following sections.
 
-1. Download the quickstart repo:
+1. Download the quickstart repository:
 
 ```bash
 git clone --depth=1 https://github.com/adap/flower.git _tmp \
@@ -63,7 +63,7 @@ flwr run .
 ---
 
 
-## Longer tutorial
+## Complete example
 
 For a more complete federated learning setup, tune the model type, number of training epochs, and other parameters in the `pyproject.toml` file. These examples require GPU access (e.g., via the Alvis cluster).
 
@@ -76,23 +76,33 @@ flwr run .
 ### Run a specific file
 
 
-
-For all the following, make sure the virtual environment is activated.
-You can run a custom python file using
-
+For all of the following commands, ensure that the virtual environment is activated. You can run custom Python files with specific parameters as needed.
+1. Example command to run a specific file:
 ```bash
 python src/file --parameters x
 ```
-For instance,
-- `src/run_baseline`: run the baseline. You can specify `train_datasets` (one or several datasets) and `test_dataset`, among the 4 following datasets: da_ddt, sv_talbanken, nno_norne, nob_norne. It is possible to monitor the validation loss for all other variable datasets during the baseline training using `monitor_all_val_losses`.
-- `src/federated_learning.py`: run a non-simulated setup, using several GPUs on the same machine. You can specify  `num_clients`, `model_name`, `max_epochs` and `num_rounds`.
+2. Example files to run:
+    - Baseline run (`src/run_baseline.py`)
+    Run the baseline model. You can specify the training datasets (one or more) and the test dataset. Available datasets include:
 
+        - da_ddt
+        - sv_talbanken
+        - nno_norne
+        - nob_norne
 
-A final command can look something like this:
-
+You can also monitor the validation loss for all datasets during baseline training using the `--monitor_all_val_losses` flag.
+Usecase example:
 ```bash
-python src/run_baseline.py --train_datasets da_ddt --test_dataset da_ddt --monitor_all_val_losses
+python src/run_baseline.py --train_datasets da_ddt sv_talkbanken --test_dataset da_ddt --monitor_all_val_losses
 ```
+    - Federated Learning (src/federated_learning.py)
+    Run a non-simulated federated learning setup using multiple GPUs on the same machine. You can specify:
+
+        - num_clients
+        - model_name
+        - max_epochs
+        - num_rounds
+
 
 ---
 
