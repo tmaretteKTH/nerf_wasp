@@ -94,12 +94,16 @@ python src/file --parameters x
     ```bash
     python src/run_baseline.py --train_datasets da_ddt sv_talkbanken --test_dataset da_ddt --monitor_all_val_losses
     ```
-    - Federated Learning (src/federated_learning.py)
+    - Federated Learning (`src/federated_learning.py`)
     Run a non-simulated federated learning setup using multiple GPUs on the same machine. You can specify:
         - `num_clients`: Number of clients (default: 2)
         - `model_name`: Model name (default: FacebookAI/xlm-roberta-base)
         - `max_epochs`: Number of epochs per round (default: 1)
         - `num_rounds`: Number of communication rounds (default: 10)
+    Usecase example:
+    ```bash
+    python src/federated_learning.py --num_clients 4 --max_epochs 3
+    ```
 
 
 ---
@@ -108,9 +112,7 @@ python src/file --parameters x
 
 ### Run batch job on Alvis
 
-To run a batch job on the Alvis cluster, use the script provided:
-
-Use [scripts/alvis_roberta_base_all_dsets.sh](scripts/alvis_roberta_base_all_dsets.sh).
+To run a batch job on the Alvis cluster, use [scripts/alvis_roberta_base_all_dsets.sh](scripts/alvis_roberta_base_all_dsets.sh).
 
 ### Running Tests with pytest
 
