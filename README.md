@@ -44,8 +44,7 @@ This is the simplest example to get started with federated learning. It is desig
 ```bash
 git clone --depth=1 https://github.com/adap/flower.git _tmp \
         && mv _tmp/examples/quickstart-pytorch-lightning . \
-        && rm -rf _tmp && cd quickstart-pytorch-lightning'
-cd quickstart-pytorch-lightning
+        && rm -rf _tmp && cd quickstart-pytorch-lightning
 ```
 
 2. Fix import deadlock issue:
