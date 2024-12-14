@@ -5,11 +5,11 @@ This project implements a federated learning setup to train a language model for
 ## Table of Contents
 
 1. [Setup](#setup)
-2. [Quickstart Example](#Quickstart Example)
-3. [Longer tutorial](#Longer tutorial)
-4. [Other tutorials](#Other tutorials)
-    - [Running batch jobs on Alvis](#Running batch jobs on Alvis)
-    - [Running Tests with pytest](#Running Tests with pytest)
+2. [Quickstart Example](#quickstartexample)
+3. [Longer tutorial](#longertutorial)
+4. [Other tutorials](#othertutorials)
+    - [Running batch jobs on Alvis](#runningbatchjobsonalvis)
+    - [Running Tests with pytest](#runningtestswithpytest)
 
 ---
 
