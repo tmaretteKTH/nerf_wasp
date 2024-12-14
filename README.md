@@ -83,18 +83,16 @@ python src/file --parameters x
 2. Example files to run:
     - Baseline run (`src/run_baseline.py`)
     Run the baseline model. You can specify the training datasets (one or more) and the test dataset. Available datasets include:
-
         - da_ddt
         - sv_talbanken
         - nno_norne
         - nob_norne
-
-You can also monitor the validation loss for all datasets during baseline training using the `--monitor_all_val_losses` flag.
-Usecase example:
-```bash
-python src/run_baseline.py --train_datasets da_ddt sv_talkbanken --test_dataset da_ddt --monitor_all_val_losses
-```
-- Federated Learning (src/federated_learning.py)
+    You can also monitor the validation loss for all datasets during baseline training using the `--monitor_all_val_losses` flag.
+    Usecase example:
+    ```bash
+    python src/run_baseline.py --train_datasets da_ddt sv_talkbanken --test_dataset da_ddt --monitor_all_val_losses
+    ```
+    - Federated Learning (src/federated_learning.py)
     Run a non-simulated federated learning setup using multiple GPUs on the same machine. You can specify:
         - num_clients
         - model_name
