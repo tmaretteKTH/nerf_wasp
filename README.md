@@ -22,6 +22,7 @@ Before running the [quickstart Example](#quickstart-example) or the [complete ex
 ```bash
 module purge
 module load Python/3.10.8-GCCcore-12.2.0
+python -m venv /mimer/NOBACKUP/groups/naiss2024-22-1455/venvs/venv_example_lightning
 source /mimer/NOBACKUP/groups/naiss2024-22-1455/venvs/venv_example_lightning/bin/activate
 ```
 2. Install dependencies (run only once):
