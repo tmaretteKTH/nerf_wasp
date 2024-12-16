@@ -22,7 +22,7 @@ This project implements a federated learning setup to train a language model for
 
 ## Project deliverable
 
-The slides used for the oral presentation are available [here](https://docs.google.com/presentation/d/13tEHW9sBmro51u8qW577dTQFy3YLxQSw7boc04vtDoQ/edit?usp=sharing)
+The slides used for the oral presentation are available [here](https://docs.google.com/presentation/d/13tEHW9sBmro51u8qW577dTQFy3YLxQSw7boc04vtDoQ/edit?usp=sharing).
 
 ### Project description
 
@@ -58,7 +58,7 @@ module purge
 module load Python/3.10.8-GCCcore-12.2.0
 ```
 
-2. *One time only* Create the virtual environment:
+2. **One time only** Create the virtual environment:
 ```bash
 python -m venv /mimer/NOBACKUP/groups/naiss2024-22-1455/venvs/venv_example
 ```
@@ -68,7 +68,7 @@ python -m venv /mimer/NOBACKUP/groups/naiss2024-22-1455/venvs/venv_example
 source /mimer/NOBACKUP/groups/naiss2024-22-1455/venvs/venv_example/bin/activate
 ```
 
-4. *One time only* Install dependencies:
+4. **One time only** Install dependencies:
 ```
 pip install -e .
 ```
