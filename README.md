@@ -29,13 +29,13 @@ Our implemenation was deployed on an Alvis node, with each client running on a s
 
 ### Authors contribution
 
-Jennifer helped develop the implementation for federated learning of a RoBERTa model for NER. She also set up the evaluation scheme and was responsible for setting up an outline for the presentation slides and report. She also took on responsibility for the report writing and constructing part of the presentation slides.
+- **Jennifer** helped develop the implementation for federated learning of a RoBERTa model for NER. She also set up the evaluation scheme and was responsible for setting up an outline for the presentation slides and report. She also took on responsibility for the report writing and constructing part of the presentation slides.
 
-Lovisa helped develop the code for training a RoBERTa model on NER datasets in a federated manner. She also contributed to setting up the environment and scripts for running the code on the HPC cluster, Alvis. 
+- **Lovisa** helped develop the code for training a RoBERTa model on NER datasets in a federated manner. She also contributed to setting up the environment and scripts for running the code on the HPC cluster, Alvis. 
 
-Kätriin helped set up the initial code and the environment for doing federated learning and was responsible for setting up the code for and running the baseline experiments (in run_baseline.py). In addition, she prepared code so that it is possible to run our code in a non-simulated setup (still on the same node).
+- **Kätriin** helped set up the initial code and the environment for doing federated learning and was responsible for setting up the code for and running the baseline experiments (in run_baseline.py). In addition, she prepared code so that it is possible to run our code in a non-simulated setup (still on the same node).
 
-Thibault helped finding unified high quality datasets for NER tasks, in different languages. He also took responsability of writing a clear and detailed README file for the Github repository, for reproducibility of the results.
+- **Thibault** helped finding unified high quality datasets for NER tasks, in different languages. He also took responsability of writing a clear and detailed README file for the Github repository, for reproducibility of the results.
 
 All authors participated in the discussion and analysis of the results, and contributed equally to the presentation slides and the written report of the project.
 
