@@ -3,9 +3,9 @@
 #SBATCH -A NAISS2024-22-1455
 #SBATCH -N 1
 #SBATCH --ntasks-per-node=1
-#SBATCH --gpus-per-node=A40:4
+#SBATCH --gpus-per-node=A40:2
 #SBATCH --job-name=roberta_base_all_dsets
-#SBATCH -o /mimer/NOBACKUP/groups/naiss2024-22-1455/project-data/nerf_wasp/logs/roberta_base_all_dsets_%A.out
+#SBATCH -o /mimer/NOBACKUP/groups/naiss2024-22-1455/project-data/nerf_wasp/logs/roberta_base_2_dsets_%A.out
 #SBATCH -t 0-03:00:00
 
 
@@ -17,6 +17,6 @@ source /mimer/NOBACKUP/groups/naiss2024-22-1455/venvs/venv_example_lightning/bin
 
 # run the script from the nerf_wasp dir
 # have 4 datasets
-# TODO: switch FROM default = "local-simulation-gpu" TO default = "local-simulation-gpu-all"
+# TODO: switch FROM default = "local-simulation-gpu" TO default = "local-simulation-gpu-2"
 # (in pyproject.toml)
 flwr run . --run-config 'model-name="FacebookAI/xlm-roberta-base"'

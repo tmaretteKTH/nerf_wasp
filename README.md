@@ -75,7 +75,6 @@ flwr run .
 
 ### Run a specific file
 
-
 For all of the following commands, ensure that the virtual environment is activated. You can run custom Python files with specific parameters as needed.
 1. Example command to run a specific file:
 ```bash
@@ -112,8 +111,23 @@ python src/file --parameters x
 ## Other tutorials
 
 ### Run batch job on Alvis
+Used to get the federated training results:
 
-To run a batch job on the Alvis cluster, use [scripts/alvis_roberta_base_all_dsets.sh](scripts/alvis_roberta_base_all_dsets.sh).
+- For 2 datasets: [scripts/alvis_roberta_base_2_dsets.sh](scripts/alvis_roberta_base_2_dsets.sh).
+- For 3 datasets: [scripts/alvis_roberta_base_3_dsets.sh](scripts/alvis_roberta_base_3_dsets.sh).
+- For all four datasets: [scripts/alvis_roberta_base_all_dsets.sh](scripts/alvis_roberta_base_all_dsets.sh).
+
+Run them using `sbatch <your-script-here>` on Alvis. Also, make sure to edit the `[tool.flwr.federations]` setting in the `pyproject.toml` file for each run as described in each script.
+
+### Run
+
+Tune the run arguments, e.g. model type and number of training epochs, using [pyproject.toml](pyproject.toml). 
+
+Make sure the virtual environment is activated and then use: 
+
+```bash
+flwr run .
+```
 
 ### Running Tests with pytest
 
