@@ -2,11 +2,6 @@
 
 Authors: Jennifer Andersson (Uppsala universitet), Lovisa Hagström (Chalmers tekniska högskola), Kätriin Kukk (Linköpings universitet) and Thibault Marette (Kungliga Tekniska högskolan).
 
-
-This project implements a federated learning setup to train a language model for Named Entity Recognition (NER) in multiple scandinavian languages: Swedish, Norwegian and Danish.
-
-
-
 ## Table of Contents
 1. [Project deliverable](#project-deliverable)
     - [Project description](#project-description)
