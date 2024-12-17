@@ -75,7 +75,7 @@ wandb login
  
 ---
 
-## Quickstart Example
+## Quickstart example
 
 This is the simplest example to get started with federated learning. It is designed to run on a CPU and is useful when you don't have access to a cluster. For more complete setups (which require GPU access), see the following sections.
 
@@ -149,7 +149,7 @@ python src/file --parameters x
 
 ## Other tutorials
 
-### Run batch job on Alvis
+### Running batch job on Alvis
 Used to get the federated training results:
 
 - For 2 datasets: [scripts/alvis_roberta_base_2_dsets.sh](scripts/alvis_roberta_base_2_dsets.sh).
@@ -158,17 +158,7 @@ Used to get the federated training results:
 
 Run them using `sbatch <your-script-here>` on Alvis. Also, make sure to edit the `[tool.flwr.federations]` setting in the `pyproject.toml` file for each run as described in each script.
 
-### Run
-
-Tune the run arguments, e.g. model type and number of training epochs, using [pyproject.toml](pyproject.toml). 
-
-Make sure the virtual environment is activated and then use: 
-
-```bash
-flwr run .
-```
-
-### Running Tests with pytest
+### Running tests with Pytest
 
 To run tests for the project, use the following command:
 
