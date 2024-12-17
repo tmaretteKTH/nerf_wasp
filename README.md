@@ -7,11 +7,11 @@ Authors: Jennifer Andersson (Uppsala universitet), Lovisa Hagström (Chalmers te
     - [Project description](#project-description)
     - [Authors contribution](#authors-contribution)
 1. [Setup](#setup)
-2. [Quickstart Example](#quickstart-example)
+2. [Quickstart example](#quickstart-example)
 3. [Complete example](#complete-example)
 4. [Other tutorials](#other-tutorials)
     - [Running batch job on Alvis](#running-batch-job-on-alvis)
-    - [Running Tests with pytest](#running-tests-with-pytest)
+    - [Running tests with Pytest](#running-tests-with-pytest)
 
 ---
 
