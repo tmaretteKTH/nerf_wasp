@@ -3,14 +3,14 @@
 Authors: Jennifer Andersson (Uppsala universitet), Lovisa Hagström (Chalmers tekniska högskola), Kätriin Kukk (Linköpings universitet) and Thibault Marette (Kungliga Tekniska högskolan).
 
 ## Table of Contents
-1. [Project deliverable](#1.-project-deliverable)
+1. [Project deliverable](#1-project-deliverable)
     - [Project description](#project-description)
     - [Authors contribution](#authors-contribution)
-2. [Structure of the repository](#2.-repository-structure)
-3. [Setup](#3.-setup)
-4. [Quickstart example](#4.-quickstart-example)
-5. [Complete example](#5.-complete-example)
-6. [Other tutorials](#6.-other-tutorials)
+2. [Structure of the repository](#2-repository-structure)
+3. [Setup](#3-setup)
+4. [Quickstart example](#4-quickstart-example)
+5. [Complete example](#5-complete-example)
+6. [Other tutorials](#6-other-tutorials)
     - [Running batch job on Alvis](#6.1-running-batch-job-on-alvis)
     - [Running tests with Pytest](#6.2-running-tests-with-pytest)
 
