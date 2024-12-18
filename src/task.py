@@ -23,13 +23,37 @@ disable_progress_bar()
 logging.getLogger("pytorch_lightning").setLevel(logging.WARNING)
 
 class NERLightningModule(pl.LightningModule):
-    
+    """
+    A PyTorch Lightning module for Named Entity Recognition (NER) using a pretrained transformer model.
+
+    This module leverages a transformer-based model for token classification tasks, such as identifying 
+    entities like Person (PER), Organization (ORG), and Location (LOC) in text data. It supports training, 
+    validation, and evaluation, with metrics computed using the `seqeval` library.
+
+    Attributes:
+        model (AutoModelForTokenClassification): The transformer model for token classification.
+        learning_rate (float): The learning rate for the optimizer.
+        metric (Metric): The evaluation metric, `seqeval`, for NER tasks.
+        label_list (list): The list of BIO style NER labels used for predictions and ground truth.
+        current_round (int): Tracks the current training round (useful in federated learning setups).
+        mode (str): Specifies the mode of operation, e.g., "federated" or standalone.
+    """
     def __init__(self, 
                  model_name="distilbert/distilbert-base-multilingual-cased", 
                  cache_dir="/mimer/NOBACKUP/groups/naiss2024-22-1455/project-data/nerf_wasp/.cache", 
                  num_labels=7, 
                  learning_rate=2e-5,
                  mode = "federated") -> None:
+        """
+        Initializes the NERLightningModule with a pretrained model and relevant parameters.
+
+        Args:
+            model_name (str): Name or path of the pretrained transformer model.
+            cache_dir (str): Directory to cache the pretrained model.
+            num_labels (int): Number of NER labels (e.g., 7 for BIO format with 3 entity types).
+            learning_rate (float): Learning rate for training the model.
+            mode (str): Operational mode (e.g., "federated" or "standalone").
+        """
         super().__init__()
         self.model = AutoModelForTokenClassification.from_pretrained(model_name, cache_dir=cache_dir, num_labels=num_labels) 
         self.learning_rate = learning_rate
@@ -39,18 +63,51 @@ class NERLightningModule(pl.LightningModule):
         self.mode = mode
         
     def forward(self, input_ids, attention_mask, labels=None) -> Any:
+        """
+        Defines the forward pass of the model.
+
+        Args:
+            input_ids (torch.Tensor): Input token IDs.
+            attention_mask (torch.Tensor): Attention mask for padding tokens.
+            labels (torch.Tensor, optional): Ground truth labels for token classification.
+
+        Returns:
+            Any: Model outputs, including logits and optionally loss.
+        """
         return self.model(input_ids, attention_mask=attention_mask, labels=labels)
     
     def training_step(self, batch, batch_idx):
+        """
+        Performs a single training step.
+
+        Args:
+            batch (dict): A batch of input data with keys `input_ids`, `attention_mask`, and `labels`.
+            batch_idx (int): Index of the current batch.
+
+        Returns:
+            torch.Tensor: The loss value for the current batch.
+        """
         outputs = self(**batch)
         loss = outputs.loss
         self.log("train_loss", loss)
         return loss    
     
     def _evaluate(self, batch, batch_idx, stage=None):
+        """
+        Helper method for evaluation during validation or testing.
+
+        Args:
+            batch (dict): A batch of input data with keys `input_ids`, `attention_mask`, and `labels`.
+            batch_idx (int): Index of the current batch.
+            stage (str, optional): The current evaluation stage, e.g., "val" or "test".
+
+        Logs:
+            Loss for the batch during the specified stage.
+        """
         outputs = self(**batch)
         loss = outputs.loss
         logits = outputs.logits
+        # use a greedy decoding to get model predictions
         predictions = torch.argmax(logits, dim=-1)
         labels = batch["labels"]
 
@@ -65,15 +122,33 @@ class NERLightningModule(pl.LightningModule):
             for prediction, label in zip(predictions, labels)
         ]
 
+        # log evaluation results
         self.metric.add_batch(predictions=true_predictions, references=true_labels)
         if stage:
             self.log(f"{stage}_loss", loss, prog_bar=True)
     
     def validation_step(self, batch, batch_idx):
+        """
+        Performs a single validation step.
+
+        Args:
+            batch (dict): A batch of input data with keys `input_ids`, `attention_mask`, and `labels`.
+            batch_idx (int): Index of the current batch.
+        """
         self._evaluate(batch, batch_idx, "val")
         # return loss
         
     def validation_epoch_end(self, outputs):
+        """
+        Computes and logs validation metrics at the end of the validation epoch.
+
+        Args:
+            outputs (list): List of outputs from `validation_step`.
+
+        Logs:
+            - Overall F1, precision, and recall.
+            - F1, precision, and recall for specific entity types (PER, ORG, LOC).
+        """
         metrics = self.metric.compute()
 
         #Overall results
@@ -104,10 +179,30 @@ class NERLightningModule(pl.LightningModule):
         
 
     def test_step(self, batch, batch_idx):
+        """
+        Performs a single test step.
+
+        Args:
+            batch (dict): A batch of input data with keys `input_ids`, `attention_mask`, and `labels`.
+            batch_idx (int): Index of the current batch.
+
+        Logs:
+            - Loss for the current batch during the test stage.
+        """
         self._evaluate(batch, batch_idx, "test")
         # return {"test_loss": loss}
 
     def test_epoch_end(self, outputs):
+        """
+        Computes and logs test metrics at the end of the test epoch.
+
+        Args:
+            outputs (list): List of outputs from `test_step` (unused in this implementation).
+
+        Logs:
+            - Overall F1, precision, and recall for the entire test dataset.
+            - F1, precision, and recall for specific entity types (PER, ORG, LOC).
+        """
         # Calculate metrics over the entire test set
         metrics = self.metric.compute()
 
@@ -138,8 +233,23 @@ class NERLightningModule(pl.LightningModule):
             pass
 
     def configure_optimizers(self):
+        """
+        Configures the optimizer and learning rate scheduler.
+
+        Returns:
+            dict: A dictionary containing the optimizer and learning rate scheduler configuration.
+        
+        Optimizer:
+            - AdamW optimizer is used for parameter updates with the specified learning rate.
+        
+        Learning Rate Scheduler:
+            - A linear warmup and decay scheduler is configured using the HuggingFace `get_linear_schedule_with_warmup`.
+            - Warmup is applied over the first 6% of total steps.
+            - In federated mode, the scheduler is updated to match the current training round.
+        """
         optimizer = torch.optim.AdamW(self.parameters(), lr=self.learning_rate)
         # roberta used a linear warmup for first 6% steps over a total of 10 epochs (with early stopping)
+        # we make sure to follow the same learning rate scheduling across the federated training
         total_number_of_epochs = 10
         warmup_share = 0.06
         total_number_of_steps = int(total_number_of_epochs*NUM_STEPS_PER_ROUND)
@@ -152,6 +262,7 @@ class NERLightningModule(pl.LightningModule):
             )
 
         if self.mode == "federated":        
+            # if doing federated training
             # update the train scheduler to the current round (starts from 1)
             for _ in range((self.current_round-1)*NUM_STEPS_PER_ROUND):
                 lr_scheduler.step()
@@ -167,23 +278,102 @@ class NERLightningModule(pl.LightningModule):
 
 
 def get_parameters(model):
+    """
+    Extracts the parameters of a PyTorch model and returns them as a list of NumPy arrays.
+
+    Args:
+        model (torch.nn.Module): The PyTorch model from which parameters are to be extracted.
+
+    Returns:
+        list: A list of NumPy arrays representing the parameters of the model.
+    """
     return [val.cpu().numpy() for _, val in model.state_dict().items()]
 
-
 def set_parameters(model, parameters):
+    """
+    Updates the parameters of a PyTorch model using a provided list of NumPy arrays.
+
+    Args:
+        model (torch.nn.Module): The PyTorch model whose parameters are to be updated.
+        parameters (list): A list of NumPy arrays representing the new parameter values.
+
+    Modifies:
+        The state dictionary of the model is updated with the new parameters.
+    """
     params_dict = zip(model.state_dict().keys(), parameters)
     state_dict = OrderedDict({k: torch.Tensor(v) for k, v in params_dict})
     model.load_state_dict(state_dict, strict=True)
 
 def load_data(dataset_name, batch_size=32, num_workers=8, model_name="FacebookAI/xlm-roberta-large", cache_dir="/mimer/NOBACKUP/groups/naiss2024-22-1455/project-data/nerf_wasp/.cache"):
-    # Select the unique dataset for this client
-    #partition = load_dataset('universalner/universal_ner', dataset_name, trust_remote_code=True)
-    #'universalner/universal_ner' does not include Norwegian
+    """
+    Loads, tokenizes, and prepares data for a specific NER dataset.
+
+    Args:
+        dataset_name (str): The name of the dataset to load.
+        batch_size (int, optional): The batch size for the data loaders. Defaults to 32.
+        num_workers (int, optional): The number of worker threads for loading data. Defaults to 8.
+        model_name (str, optional): The name or path of the pretrained model tokenizer to use. Defaults to "FacebookAI/xlm-roberta-large".
+        cache_dir (str, optional): Directory to cache the dataset and tokenizer. Defaults to a predefined path.
+
+    Returns:
+        tuple: A tuple containing:
+            - train_loader (torch.utils.data.DataLoader): DataLoader for the training partition.
+            - val_loader (torch.utils.data.DataLoader): DataLoader for the validation partition.
+            - test_loader (torch.utils.data.DataLoader): DataLoader for the test partition.
+
+    Notes:
+        - This function assumes the dataset follows the "K2triinK/universal_ner_nordic_FL" format, with keys 
+          such as "tokens" and "ner_tags".
+        - The labels are aligned with tokenized inputs, and out-of-word tokens are assigned a label of -100.
+        - Each partition is tokenized, formatted, and converted to PyTorch tensors for use in data loaders.
+    """
+    # Load the dataset
     partition = load_dataset("K2triinK/universal_ner_nordic_FL", dataset_name, cache_dir=cache_dir, trust_remote_code=True)
     tokenizer = AutoTokenizer.from_pretrained(model_name)
     
     # Tokenize the dataset
     def tokenize_and_align_labels(batch):
+        """
+        Tokenize input text and align labels to the tokenized outputs.
+
+        This function processes a batch of tokenized input data by:
+        1. Tokenizing the input text (`tokens`) using a tokenizer configured for 
+        handling word-level splits.
+        2. Aligning the Named Entity Recognition (NER) labels (`ner_tags`) with 
+        the tokenized outputs. For subword tokens or special tokens, it assigns 
+        a label of `-100` to ignore them during training.
+
+        Args:
+            batch (dict): A batch of data containing:
+                - `tokens` (list of list of str): The tokenized words for each example in the batch.
+                - `ner_tags` (list of list of int): The corresponding NER labels for the tokens.
+
+        Returns:
+            dict: A dictionary containing:
+                - `input_ids` (list of list of int): The tokenized input IDs.
+                - `attention_mask` (list of list of int): The attention mask for the tokenized inputs.
+                - `labels` (list of list of int): The aligned labels for each tokenized input, 
+                with `-100` for tokens that should be ignored during training.
+
+        Example:
+            Input:
+            batch = {
+                "tokens": [["John", "lives", "in", "New", "York"]],
+                "ner_tags": [[1, 0, 0, 3, 3]]
+            }
+
+            Output:
+            {
+                "input_ids": [[101, 2198, 3268, ..., 102]],
+                "attention_mask": [[1, 1, 1, ..., 0]],
+                "labels": [[1, -100, 0, 3, 3, -100, -100, ..., -100]]
+            }
+
+        Notes:
+            - This function is designed to work with tokenizers that support 
+            `is_split_into_words=True`, ensuring proper handling of pre-tokenized inputs.
+            - Tokens corresponding to special tokens or padding are ignored in the `labels`.
+        """
         # Tokenize the input text
         tokenized_inputs = tokenizer(batch["tokens"], truncation=True, padding="max_length", max_length=tokenizer.model_max_length, is_split_into_words=True)
 
