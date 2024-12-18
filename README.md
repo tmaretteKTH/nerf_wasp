@@ -17,7 +17,7 @@ Authors: Jennifer Andersson (Uppsala universitet), Lovisa Hagström (Chalmers te
 
 ## Project deliverable
 
-The slides used for the oral presentation are available [here](https://docs.google.com/presentation/d/13tEHW9sBmro51u8qW577dTQFy3YLxQSw7boc04vtDoQ/edit?usp=sharing).
+The slides used for the oral presentation are available [here (pdf)](slides/NERF_WASP.pdf) or [here (pptx)](slides/NERF_WASP.pptx)
 
 ### Project description
 
