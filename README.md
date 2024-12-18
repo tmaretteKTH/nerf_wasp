@@ -6,10 +6,11 @@ Authors: Jennifer Andersson (Uppsala universitet), Lovisa Hagström (Chalmers te
 1. [Project deliverable](#project-deliverable)
     - [Project description](#project-description)
     - [Authors contribution](#authors-contribution)
-1. [Setup](#setup)
-2. [Quickstart example](#quickstart-example)
-3. [Complete example](#complete-example)
-4. [Other tutorials](#other-tutorials)
+2. [Structure of the repository](#repository-structure)
+3. [Setup](#setup)
+4. [Quickstart example](#quickstart-example)
+5. [Complete example](#complete-example)
+6. [Other tutorials](#other-tutorials)
     - [Running batch job on Alvis](#running-batch-job-on-alvis)
     - [Running tests with Pytest](#running-tests-with-pytest)
 
@@ -38,6 +39,38 @@ Our implemenation was deployed on an Alvis node, with each client running on a s
 - **Thibault** helped finding unified high quality datasets for NER tasks, in different languages. He also took responsability of writing a clear and detailed README file for the Github repository, for reproducibility of the results.
 
 All authors participated in the discussion and analysis of the results, and contributed equally to the presentation slides and the written report of the project.
+---
+
+## Repository Structure
+
+
+The repository is organised as follow:
+
+```
+nerf_wasp/
+├── slides/ # slides used for the presentations
+├── scripts/                                   # See section 6.1 below
+│   ├── alvis_roberta_base_2_dset.sh           # Runs the federated algorithm for 2 clients
+│   ├── alvis_roberta_base_3_dset.sh           # Runs the federated algorithm for 3 clients
+│   ├── alvis_roberta_base_all_dset.sh         # Runs the federated algorithm for 4 clients
+│   ├── alvis_roberta_base_baseline_dset.sh    # Runs the baseline algorithm
+├── src/
+│   ├── __init__.py
+│   ├── client_app.py                          # Defines the client app 
+│   ├── client_app_federated.py                # Defines the client app in a federated setting
+│   ├── federated_learning.py                  # Defines the federated algorithm (see section 5 below)
+│   ├── run_baseline.py                        # Defines the baseline algorithm (see section 5 below)
+│   ├── server_app.py                          # Defines the server app
+│   ├── server_app_federated.py                # Defines the server app in a federated setting
+│   └── task.py                                # Defines the model, data loading and logging
+├── test/
+│   ├── test_flwr.py                           # Execute a test run with flower
+├── LICENSE                                    # License
+├── pyproject.toml                             # Project metadata like dependencies and configs
+└── README.md
+
+```
+
 
 ---
 
