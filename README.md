@@ -3,20 +3,20 @@
 Authors: Jennifer Andersson (Uppsala universitet), Lovisa Hagström (Chalmers tekniska högskola), Kätriin Kukk (Linköpings universitet) and Thibault Marette (Kungliga Tekniska högskolan).
 
 ## Table of Contents
-1. [Project deliverable](#project-deliverable)
+1. [Project deliverable](#1.-project-deliverable)
     - [Project description](#project-description)
     - [Authors contribution](#authors-contribution)
-2. [Structure of the repository](#repository-structure)
-3. [Setup](#setup)
-4. [Quickstart example](#quickstart-example)
-5. [Complete example](#complete-example)
-6. [Other tutorials](#other-tutorials)
-    - [Running batch job on Alvis](#running-batch-job-on-alvis)
-    - [Running tests with Pytest](#running-tests-with-pytest)
+2. [Structure of the repository](#2.-repository-structure)
+3. [Setup](#3.-setup)
+4. [Quickstart example](#4.-quickstart-example)
+5. [Complete example](#5.-complete-example)
+6. [Other tutorials](#6.-other-tutorials)
+    - [Running batch job on Alvis](#6.1-running-batch-job-on-alvis)
+    - [Running tests with Pytest](#6.2-running-tests-with-pytest)
 
 ---
 
-## Project deliverable
+## 1. Project deliverable
 
 The slides used for the oral presentation are available [here (pdf)](slides/NERF_WASP.pdf) or [here (pptx)](slides/NERF_WASP.pptx)
 
@@ -41,7 +41,7 @@ Our implemenation was deployed on an Alvis node, with each client running on a s
 All authors participated in the discussion and analysis of the results, and contributed equally to the presentation slides and the written report of the project.
 ---
 
-## Repository Structure
+## 2. Repository Structure
 
 
 The repository is organised as follow:
@@ -74,7 +74,7 @@ nerf_wasp/
 
 ---
 
-## Setup
+## 3. Setup
 
 Before running the [quickstart Example](#quickstart-example) or the [complete example](#complete-example), ensure that the required packages are installed and you are logged into your Wandb account.
 
@@ -108,7 +108,7 @@ wandb login
  
 ---
 
-## Quickstart example
+## 4. Quickstart example
 
 This is the simplest example to get started with federated learning. It is designed to run on a CPU and is useful when you don't have access to a cluster. For more complete setups (which require GPU access), see the following sections.
 
@@ -135,7 +135,7 @@ flwr run .
 ---
 
 
-## Complete example
+## 5. Complete example
 
 For a more complete federated learning setup, tune the model type, number of training epochs, and other parameters in the `pyproject.toml` file. These examples require GPU access (e.g., via the Alvis cluster).
 
@@ -180,9 +180,9 @@ python src/file --parameters x
 
 ---
 
-## Other tutorials
+## 6. Other tutorials
 
-### Running batch job on Alvis
+### 6.1 Running batch job on Alvis
 Used to get the federated training results:
 
 - For 2 datasets: [scripts/alvis_roberta_base_2_dsets.sh](scripts/alvis_roberta_base_2_dsets.sh).
@@ -191,7 +191,7 @@ Used to get the federated training results:
 
 Run them using `sbatch <your-script-here>` on Alvis. Also, make sure to edit the `[tool.flwr.federations]` setting in the `pyproject.toml` file for each run as described in each script.
 
-### Running tests with Pytest
+### 6.2 Running tests with Pytest
 
 To run tests for the project, use the following command:
 
