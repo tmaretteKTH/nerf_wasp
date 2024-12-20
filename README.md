@@ -13,6 +13,7 @@ Authors: Jennifer Andersson (Uppsala universitet), Lovisa Hagström (Chalmers te
 6. [Other tutorials](#6-other-tutorials)
     - [Running batch job on Alvis](#6.1-running-batch-job-on-alvis)
     - [Running tests with Pytest](#6.2-running-tests-with-pytest)
+    - [Scaling up the project](#6.3-scaling-up-the-project)
 
 ---
 
@@ -198,3 +199,7 @@ To run tests for the project, use the following command:
 ```bash
 python -m pytest test
 ```
+
+### 6.3 Scaling up the project
+
+It is possible to run our code on an arbitrary large number of datasets, given that you have available a corresponding number of CPUs. To do so, update the `load_data` function from `src/task.py` with a link to your own huggingface dataset repository. Then, based on [our code](https://huggingface.co/datasets/K2triinK/universal_ner_nordic_FL/blob/main/universal_ner_nordic_FL.py), you can add datasets to the variable `_UNER_DATASETS`. Please refer to [UniversalNER git](https://github.com/UniversalNER) to check for available datasets.
