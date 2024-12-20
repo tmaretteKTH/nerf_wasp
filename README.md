@@ -57,11 +57,11 @@ nerf_wasp/
 ├── src/
 │   ├── __init__.py
 │   ├── client_app.py                          # Defines the client app 
-│   ├── client_app_federated.py                # Defines the client app in a federated setting
-│   ├── federated_learning.py                  # Defines the federated algorithm (see section 5 below)
-│   ├── run_baseline.py                        # Defines the baseline algorithm (see section 5 below)
+│   ├── client_app_federated_nonsimulated.py   # Defines the client app in a nonsimulated federated setting
+│   ├── federated_learning_nonsimulated.py     # Defines the nonsimulated federated algorithm (section 5)
+│   ├── run_baseline.py                        # Defines the baseline algorithm (section 5)
 │   ├── server_app.py                          # Defines the server app
-│   ├── server_app_federated.py                # Defines the server app in a federated setting
+│   ├── server_app_federated_nonsimulated.py   # Defines the server app in a nonsimulated federated setting
 │   └── task.py                                # Defines the model, data loading and logging
 ├── test/
 │   ├── test_flwr.py                           # Execute a test run with flower
@@ -86,14 +86,14 @@ module purge
 module load Python/3.10.8-GCCcore-12.2.0
 ```
 
-2. **One time only** Create the virtual environment:
+2. **One time only** Create the virtual environment (example for Alvis, X-YY is your project number):
 ```bash
-python -m venv /mimer/NOBACKUP/groups/naiss2024-22-1455/venvs/venv_example
+python -m venv /mimer/NOBACKUP/groups/naiss2024-X-YY/venvs/venv_example
 ```
 
 3. Activate the python environment:
 ```bash
-source /mimer/NOBACKUP/groups/naiss2024-22-1455/venvs/venv_example/bin/activate
+source /mimer/NOBACKUP/groups/naiss2024-X-YY/venvs/venv_example/bin/activate
 ```
 
 4. **One time only** Install dependencies:
@@ -164,9 +164,9 @@ python src/file --parameters x
    
     Usecase example:
     ```bash
-    python src/run_baseline.py --train_datasets da_ddt sv_talbanken --test_dataset da_ddt --monitor_all_val_losses
+    python src/run_baseline.py --train_datasets da_ddt --test_dataset da_ddt --monitor_all_val_losses
     ```
-    - Federated Learning (`src/federated_learning.py`)
+    - Federated Learning (`src/federated_learning_nonsimulated.py`)
     Run a non-simulated federated learning setup using multiple GPUs on the same machine. You can specify:
         - `num_clients`: Number of clients (default: 2)
         - `model_name`: Model name (default: FacebookAI/xlm-roberta-base)
@@ -174,7 +174,7 @@ python src/file --parameters x
         - `num_rounds`: Number of communication rounds (default: 10)
     Usecase example:
     ```bash
-    python src/federated_learning.py --num_clients 4 --max_epochs 3
+    python src/federated_learning_nonsimulated.py --num_clients 4 --max_epochs 3
     ```
 
 

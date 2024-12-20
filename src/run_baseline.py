@@ -17,24 +17,57 @@ from task import (
 
 logging.basicConfig(level=INFO)
 
-# "sv_pud"
+# The following are the datasets used for our project (see https://github.com/UniversalNER for details)
 DATA_NAMES = ["da_ddt", "sv_talbanken", "nno_norne", "nob_norne"]
 
 class BaselineNERLightningModule(NERLightningModule):
+    """
+    A PyTorch Lightning module for Named Entity Recognition (NER) using a pretrained transformer model.
+
+    This module overwrites the validation_step()-method in the NERLightningModule defined in task.py in
+    order to monitor validation loss on datasets we are not training and evaluating on.
+    """
     def validation_step(self, batch, batch_idx, dataloader_idx=0):
+        """
+        A function for monitoring the validation loss using several dataloaders.
+
+        This function calls the _evaluate()-method of the NERLightningModule, assigning the stage based 
+        on the ID of the dataloader.
+
+        Args:
+            batch (dict): A batch of input data with keys `input_ids`, `attention_mask`, and `labels`.
+            batch_idx (int): Index of the current batch.
+            dataloader_idx (int): Index of the current dataloader.
+        """
         if dataloader_idx == 0:
             self._evaluate(batch, batch_idx, "val")
         else:
             dataset_name = self.trainer.val_dataloaders[dataloader_idx].dataset.name
             self._evaluate(batch, batch_idx, f"{dataset_name}_val")
 
-# Callback for recreating and shuffling the DataLoader at the beginning of each epoch
+
 class ShuffleDataLoaderCallback(Callback):
+    """
+    A callback for recreating and shuffling the DataLoader at the beginning of each epoch.
+
+    This callback is used for the larger Norwegian datasets, so that the data gets shuffled
+    at the beginning of each epoch to avoid training on the same data in every epoch. This is not 
+    needed in the federated setup because the data gets loaded (and thus shuffled) 
+    at the beginning of each round.
+
+    Attributes:
+        train_loader (DataLoader): The training dataloader to be shuffled.
+    """
     def __init__(self, train_loader):
         self.train_loader = train_loader
 
     def on_train_epoch_start(self, trainer, pl_module):
-        # Recreate DataLoader with shuffled dataset
+        """
+        A function for shuffling the training data at the beginning of each epoch.
+
+        This function takes the current train_loader and creates a new one by shuffling its dataset. 
+        The new train loader then gets assigned to trainer.fit_loop._data_loader_iter.
+        """
         new_train_loader = DataLoader(
             dataset=self.train_loader.dataset,
             batch_size=self.train_loader.batch_size,
@@ -47,11 +80,24 @@ class ShuffleDataLoaderCallback(Callback):
 
 def run(model_name = "FacebookAI/xlm-roberta-base", train_datasets = DATA_NAMES, test_dataset = "da_ddt",
         max_epochs = 10, monitor_all_val_losses = True) -> None:
+    """
+    The main function for training the baseline model.
+
+    This function loads the data, sets up callbacks, learning rate monitoring and logging, prepares
+    the trainer, runs training and thereafter evaluates the results on the test set.
+
+    Args:
+        model_name (str): The name of the model used for training the baseline.
+        train_datasets (List[str]): A list of datasets to train on.
+        test_dataset (str): The dataset to validate and test on.
+        max_epochs (int): The number of epochs to train for.
+        monitor_all_val_losses (bool): Whether to monitor the validation loss on datasets we are not training on.
+    """
     
     print("Training on the following datasets:", train_datasets)
     print("Testing on the following dataset:", test_dataset)
 
-    #Prepare data
+    #Load training data
     if len(train_datasets) == 1 and train_datasets[0] == test_dataset:
         train_loader, val_loader, test_loader = load_data(test_dataset, model_name=model_name)
     elif len(train_datasets) == 1:
@@ -63,8 +109,13 @@ def run(model_name = "FacebookAI/xlm-roberta-base", train_datasets = DATA_NAMES,
         train_data = concatenate_datasets([load_data(name, model_name = model_name)[0].dataset for name in train_datasets])
         train_loader = DataLoader(train_data, batch_size=batch_size, shuffle=True, num_workers=num_workers)
     
+    # Load evaluation data
     _, val_loader, test_loader = load_data(test_dataset, model_name=model_name)
 
+    # If we want to monitor the validation loss on other datasets than the test_dataset,
+    # we load the other datasets here
+    # This also affects the wandb run name, the early stopping criteria and if we use the
+    # NERLightningModule from task.py or the BaselineNERLightningModule defined above
     if monitor_all_val_losses:
         # Additional validation datasets
         additional_val_datasets = [dataset for dataset in DATA_NAMES if dataset != test_dataset]
@@ -78,13 +129,14 @@ def run(model_name = "FacebookAI/xlm-roberta-base", train_datasets = DATA_NAMES,
         early_stopping_criteria = "val_loss"
         model = NERLightningModule(model_name=model_name, mode="baseline")
 
+    # Set up wandb logging, learning rate monitoring and the callback for shuffling data
     wandb_logger = WandbLogger(project="nerf_wasp", name=wandb_run_name)
     wandb_logger.experiment.config.update({"model": model_name, "train_data": train_datasets,
                                             "test_data": test_dataset})
     lr_monitor = LearningRateMonitor(logging_interval='step')
     shuffle_callback = ShuffleDataLoaderCallback(train_loader)
 
-
+    # Prepare trainer
     trainer = pl.Trainer(max_epochs=max_epochs,
                         logger=wandb_logger,
                         accelerator="auto",
@@ -100,6 +152,7 @@ def run(model_name = "FacebookAI/xlm-roberta-base", train_datasets = DATA_NAMES,
                         limit_train_batches=NUM_STEPS_PER_ROUND
                         )
     
+    # Train and evaluate on the validation set
     if monitor_all_val_losses:
         trainer.fit(model=model, 
                     train_dataloaders=train_loader, 
@@ -109,7 +162,7 @@ def run(model_name = "FacebookAI/xlm-roberta-base", train_datasets = DATA_NAMES,
                     train_dataloaders=train_loader, 
                     val_dataloaders = val_loader)
     
-    # Test model
+    # Evaluate on the test set
     trainer.test(model=model, dataloaders=test_loader)
 
 
@@ -127,6 +180,7 @@ if __name__ == "__main__":
     # Parse arguments
     args = parser.parse_args()
 
+    # Run the script
     run(model_name = args.model_name, 
         train_datasets = args.train_datasets, 
         test_dataset = args.test_dataset,
