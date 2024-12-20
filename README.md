@@ -203,11 +203,11 @@ python -m pytest test
 ### 6.3 Scaling up the project
 
 It is possible to run our code on an arbitrary large number of datasets, given that you have a corresponding number of CPUs available.
-- Step1. Create your own [huggingface datasets repository](https://huggingface.co/datasets), based on the [UniversalNER datasets](https://huggingface.co/datasets/universalner/universal_ner/blob/main/universal_ner.py).
+- Step1. Create your own [huggingface datasets repository](https://huggingface.co/datasets), based on the [UniversalNER datasets](https://huggingface.co/datasets/universalner/universal_ner/tree/main).
 - Step2. Update the `load_data` function from `src/task.py` with a link to your huggingface datasets.
 - Step3. If you are using the Norwegian dataset, change line 239:
    ```python
    #actual_tags = [token["tag"] for token in sent] #Old line, gives an error with the Norwegian datasets
    actual_tags = [token["tag"] if token["tag"] != "-" else "O" for token in sent]  # Replace "-" with "O"
    ```
-- Step4. Enjoy doing multilanguage NER in a federated setup, with a wide variety of languages!
+- Step4. Enjoy doing multilingual NER in a federated setup, with a wide variety of languages!
