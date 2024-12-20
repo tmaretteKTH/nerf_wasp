@@ -11,9 +11,9 @@ Authors: Jennifer Andersson (Uppsala universitet), Lovisa Hagström (Chalmers te
 4. [Quickstart example](#4-quickstart-example)
 5. [Complete example](#5-complete-example)
 6. [Other tutorials](#6-other-tutorials)
-    - [Running batch job on Alvis](#6.1-running-batch-job-on-alvis)
-    - [Running tests with Pytest](#6.2-running-tests-with-pytest)
-    - [Scaling up the project](#6.3-scaling-up-the-project)
+    - [Running batch job on Alvis](#61-running-batch-job-on-alvis)
+    - [Running tests with Pytest](#62-running-tests-with-pytest)
+    - [Scaling up the project](#63-scaling-up-the-project)
 
 ---
 
