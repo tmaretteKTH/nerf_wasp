@@ -19,8 +19,7 @@ Authors: Jennifer Andersson (Uppsala universitet), Lovisa Hagström (Chalmers te
 
 ## 1. Project deliverable
 
-A project report summarizing the problem, methods and results are available [here (ipynb)](https://colab.research.google.com/drive/1K93_OoAdp3YAN8H6gxUFohUYcIfEvj7S?usp=sharing). The slides used for the oral presentation are available [here (pdf)](slides/NERF_WASP.pdf) or [here (pptx)](slides/NERF_WASP.pptx)
-A project report summarizing the problem, methods and results are available [here (ipynb)](). The slides used for the oral presentation are available [here (pdf)](slides/NERF_WASP.pdf) or [here (pptx)](slides/NERF_WASP.pptx)
+A project report summarizing the problem, methods and results is available [here (ipynb)](https://colab.research.google.com/drive/1K93_OoAdp3YAN8H6gxUFohUYcIfEvj7S?usp=sharing). The slides used for the oral presentation are available [here (pdf)](slides/NERF_WASP.pdf) or [here (pptx)](slides/NERF_WASP.pptx).
 
 ### Project description
 
@@ -41,6 +40,7 @@ Our implemenation was deployed on an Alvis node, with each client running on a s
 - **Thibault** helped finding unified high quality datasets for NER tasks, in different languages. He also took responsability of writing a clear and detailed README file for the Github repository, for reproducibility of the results.
 
 All authors participated in the discussion and analysis of the results, and contributed equally to the presentation slides and the written report of the project.
+
 ---
 
 ## 2. Repository Structure
