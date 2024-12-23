@@ -24,12 +24,12 @@ A project report summarizing the problem, methods and results is available [here
 ### Project description
 
 
-In this project we employed federated learning to train a language model for named entity recognition (NER) across several scandinavian languages (Swedish, Danish and Norwegian). In this setup, several clients, each with their own dataset, want to collaborate on building a shared NER model. However, due, to privacy regulations (for instance), these clients are unable to exhange their datasets. To address this problem, we leverage federated learning, where each client train their own NER model locally with their data, and only communicate new weights with a global model, shared between all the clients. The global model is then updated by aggregating the received weights, using a federated aggregation strategy.
+In this project we employed federated learning to train a language model for named entity recognition (NER) across several Scandinavian languages (Swedish, Danish and Norwegian). In this setup, several clients, each with their own dataset, want to collaborate on building a shared NER model. However, due to privacy regulations (for instance), these clients are unable to exhange their datasets. To address this problem, we leverage federated learning, where each client trains their own NER model locally with their own data, and only communicates new weights with a global model, shared between all the clients. The global model is then updated by aggregating the received weights, using a federated aggregation strategy.
 
-Our implemenation was deployed on an Alvis node, with each client running on a separate GPU. We evaluated the performance of our federated approahc using precision, recall, and F1-score metrics, and compared it against a baseline model trained without the federated framework.
+Our implemenation was deployed on an Alvis node, with each client running on a separate GPU. We evaluated the performance of our federated approach using precision, recall, and F1-score metrics, and compared it against a baseline model trained without the federated framework.
 
 
-### Authors contribution
+### Authors' contributions
 
 - **Jennifer** helped develop the implementation for federated learning of a RoBERTa model for NER. She also set up the evaluation scheme and was responsible for setting up an outline for the presentation slides and report. She also took on responsibility for the report writing and constructing part of the presentation slides.
 
@@ -46,7 +46,7 @@ All authors participated in the discussion and analysis of the results, and cont
 ## 2. Repository Structure
 
 
-The repository is organised as follow:
+The repository is organised as follows:
 
 ```
 nerf_wasp/
