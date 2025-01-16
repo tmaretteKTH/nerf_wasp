@@ -45,7 +45,6 @@ All authors participated in the discussion and analysis of the results, and cont
 
 ## 2. Repository Structure
 
-
 The repository is organised as follows:
 
 ```
@@ -75,6 +74,9 @@ nerf_wasp/
 
 
 ---
+
+Three main scripts are used to train the model using the federated learning framework Flower: client_app.py, server_app.py and task.py (located in the src-folder). We provide two sets of scripts (simulated and non-simulated), but the results presented in the report are obtained using the simulated setting, i.e. the scripts named client_app.py, server_app.py and task.py. For details regarding the purpose of each of these scripts in the federated setup, see Section 4 in the report. You find the report [here (ipynb)](https://colab.research.google.com/drive/1K93_OoAdp3YAN8H6gxUFohUYcIfEvj7S?usp=sharing).
+
 
 ## 3. Setup
 
