@@ -80,7 +80,7 @@ Three main scripts are used to train the model using the federated learning fram
 
 ## 3. Setup
 
-Before running the [quickstart Example](#quickstart-example) or the [complete example](#complete-example), ensure that the required packages are installed and you are logged into your Wandb account.
+Before running the [quickstart Example](#4-quickstart-example) or the [complete example](#5-complete-example), ensure that the required packages are installed and you are logged into your Wandb account.
 
 
 1. Load required modules:
