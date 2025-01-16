@@ -51,9 +51,9 @@ The repository is organised as follows:
 nerf_wasp/
 ├── slides/ # slides used for the presentations
 ├── scripts/                                   # See section 6.1 below
-│   ├── alvis_roberta_base_2_dset.sh           # Runs the federated algorithm for 2 clients
-│   ├── alvis_roberta_base_3_dset.sh           # Runs the federated algorithm for 3 clients
-│   ├── alvis_roberta_base_all_dset.sh         # Runs the federated algorithm for 4 clients
+│   ├── alvis_roberta_base_2_dset.sh           # Runs the federated algorithm for 2 clients (Setting 1 (S1))
+│   ├── alvis_roberta_base_3_dset.sh           # Runs the federated algorithm for 3 clients (Setting 2 (S2))
+│   ├── alvis_roberta_base_all_dset.sh         # Runs the federated algorithm for 4 clients (Setting 3 (S3))
 │   ├── alvis_roberta_base_baseline_dset.sh    # Runs the baseline algorithm
 ├── src/
 │   ├── __init__.py
