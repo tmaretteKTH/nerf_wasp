@@ -20,7 +20,7 @@ Authors: Jennifer Andersson (Uppsala universitet), Lovisa Hagström (Chalmers te
 
 ## 1. Project deliverable
 
-A project report summarizing the problem, methods and results is available [here (ipynb)](https://colab.research.google.com/drive/1K93_OoAdp3YAN8H6gxUFohUYcIfEvj7S?usp=sharing). The slides used for the oral presentation are available [here (pdf)](slides/NERF_WASP.pdf) or [here (pptx)](slides/NERF_WASP.pptx). A recording of the project presentation is available [![here](https://i.sstatic.net/Vp2cE.png)](https://youtu.be/eVNabHd_f8Y?si=LD_BPidxPKw9S76f)
+A project report summarizing the problem, methods and results is available [here (ipynb)](https://colab.research.google.com/drive/1K93_OoAdp3YAN8H6gxUFohUYcIfEvj7S?usp=sharing). The slides used for the oral presentation are available [here (pdf)](slides/NERF_WASP.pdf) or [here (pptx)](slides/NERF_WASP.pptx). A recording of the project presentation is available [![here](slides/nerPresentation.png)](https://youtu.be/eVNabHd_f8Y?si=LD_BPidxPKw9S76f)
 
 ### Project description
 
@@ -220,4 +220,4 @@ It is possible to run our code on an arbitrary large number of datasets, given t
 ## 7. Acknowledgements
 This project was partially supported by the Wallenberg AI, Autonomous Systems and Software Program funded by Knut and Alice Wallenberg Foundation to fufill the requirements to pass the WASP Graduate School Course Scalable Data Science and Distributed Machine Learning - ScaDaMaLe-WASP-UU-2024 at https://lamastex.github.io/ScaDaMaLe. Computing infrastructure for learning was supported by Databricks Inc.'s Community Edition. The course was Industrially sponsored by Jim Dowling of Logical Clocks AB, Stockholm, Sweden, Reza Zadeh of Matroid Inc., Palo Alto, California, USA, and Andreas Hellander & Salman Toor of Scaleout Systems AB, Uppsala, Sweden. 
 
-The computations was enabled by resources provided by Chalmers e-Commons at Chalmers.
+The computations performed in this project were enabled by resources provided by Chalmers e-Commons at Chalmers.
