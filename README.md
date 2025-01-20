@@ -14,12 +14,13 @@ Authors: Jennifer Andersson (Uppsala universitet), Lovisa Hagström (Chalmers te
     - [Running batch job on Alvis](#61-running-batch-job-on-alvis)
     - [Running tests with Pytest](#62-running-tests-with-pytest)
     - [Scaling up the project](#63-scaling-up-the-project)
+7. [Acknowledgements](#7-Acknowledgements)
 
 ---
 
 ## 1. Project deliverable
 
-A project report summarizing the problem, methods and results is available [here (ipynb)](https://colab.research.google.com/drive/1K93_OoAdp3YAN8H6gxUFohUYcIfEvj7S?usp=sharing). The slides used for the oral presentation are available [here (pdf)](slides/NERF_WASP.pdf) or [here (pptx)](slides/NERF_WASP.pptx).
+A project report summarizing the problem, methods and results is available [here (ipynb)](https://colab.research.google.com/drive/1K93_OoAdp3YAN8H6gxUFohUYcIfEvj7S?usp=sharing). The slides used for the oral presentation are available [here (pdf)](slides/NERF_WASP.pdf) or [here (pptx)](slides/NERF_WASP.pptx). A recording of the project presentation is available [![here](https://i.sstatic.net/Vp2cE.png)](https://youtu.be/eVNabHd_f8Y?si=LD_BPidxPKw9S76f)
 
 ### Project description
 
@@ -214,3 +215,9 @@ It is possible to run our code on an arbitrary large number of datasets, given t
    actual_tags = [token["tag"] if token["tag"] != "-" else "O" for token in sent]  # Replace "-" with "O"
    ```
 - Step4. Enjoy doing multilingual NER in a federated setup, with a wide variety of languages!
+
+
+## 7. Acknowledgements
+This project was partially supported by the Wallenberg AI, Autonomous Systems and Software Program funded by Knut and Alice Wallenberg Foundation to fufill the requirements to pass the WASP Graduate School Course Scalable Data Science and Distributed Machine Learning - ScaDaMaLe-WASP-UU-2024 at https://lamastex.github.io/ScaDaMaLe. Computing infrastructure for learning was supported by Databricks Inc.'s Community Edition. The course was Industrially sponsored by Jim Dowling of Logical Clocks AB, Stockholm, Sweden, Reza Zadeh of Matroid Inc., Palo Alto, California, USA, and Andreas Hellander & Salman Toor of Scaleout Systems AB, Uppsala, Sweden. 
+
+The computations was enabled by resources provided by Chalmers e-Commons at Chalmers.
