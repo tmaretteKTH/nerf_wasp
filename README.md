@@ -20,7 +20,7 @@ Authors: Jennifer Andersson (Uppsala universitet), Lovisa Hagström (Chalmers te
 
 ## 1. Project deliverable
 
-A project report summarizing the problem, methods and results is available [here (ipynb)](https://colab.research.google.com/drive/1K93_OoAdp3YAN8H6gxUFohUYcIfEvj7S?usp=sharing). The slides used for the oral presentation are available [here (pdf)](slides/NERF_WASP.pdf) or [here (pptx)](slides/NERF_WASP.pptx). A recording of the project presentation is available [![here](slides/nerPresentation.png)](https://youtu.be/eVNabHd_f8Y?si=LD_BPidxPKw9S76f)
+A project report summarizing the problem, methods and results is available [here (ipynb)](https://colab.research.google.com/drive/1K93_OoAdp3YAN8H6gxUFohUYcIfEvj7S?usp=sharing). The slides used for the oral presentation are available [here (pdf)](slides/NERF_WASP.pdf) or [here (pptx)](slides/NERF_WASP.pptx). A recording of the project presentation is available here: [![here](slides/nerPresentation.png)](https://youtu.be/eVNabHd_f8Y?si=LD_BPidxPKw9S76f)
 
 ### Project description
 
