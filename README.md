@@ -4,8 +4,8 @@ Authors: Jennifer Andersson (Uppsala universitet), Lovisa Hagström (Chalmers te
 
 ## Table of Contents
 1. [Project deliverable](#1-project-deliverable)
-    - [Project description](#project-description)
-    - [Authors contribution](#authors-contribution)
+    - [Project description](#11-project-description)
+    - [Authors contributions](#12-authors-contributions)
 2. [Structure of the repository](#2-repository-structure)
 3. [Setup](#3-setup)
 4. [Quickstart example](#4-quickstart-example)
@@ -14,7 +14,7 @@ Authors: Jennifer Andersson (Uppsala universitet), Lovisa Hagström (Chalmers te
     - [Running batch job on Alvis](#61-running-batch-job-on-alvis)
     - [Running tests with Pytest](#62-running-tests-with-pytest)
     - [Scaling up the project](#63-scaling-up-the-project)
-7. [Acknowledgements](#7-Acknowledgements)
+7. [Acknowledgements](#7-acknowledgements)
 
 ---
 
@@ -22,7 +22,7 @@ Authors: Jennifer Andersson (Uppsala universitet), Lovisa Hagström (Chalmers te
 
 A project report summarizing the problem, methods and results is available [here (ipynb)](https://colab.research.google.com/drive/1K93_OoAdp3YAN8H6gxUFohUYcIfEvj7S?usp=sharing). The slides used for the oral presentation are available [here (pdf)](slides/NERF_WASP.pdf) or [here (pptx)](slides/NERF_WASP.pptx). A recording of the project presentation is available here: [![here](slides/nerPresentation.png)](https://youtu.be/eVNabHd_f8Y?si=LD_BPidxPKw9S76f)
 
-### Project description
+### 1.1 Project description
 
 
 In this project we employed federated learning to train a language model for named entity recognition (NER) across several Scandinavian languages (Swedish, Danish and Norwegian). In this setup, several clients, each with their own dataset, want to collaborate on building a shared NER model. However, due to privacy regulations (for instance), these clients are unable to exhange their datasets. To address this problem, we leverage federated learning, where each client trains their own NER model locally with their own data, and only communicates new weights with a global model, shared between all the clients. The global model is then updated by aggregating the received weights, using a federated aggregation strategy.
@@ -30,7 +30,7 @@ In this project we employed federated learning to train a language model for nam
 Our implemenation was deployed on an Alvis node, with each client running on a separate GPU. We evaluated the performance of our federated approach using precision, recall, and F1-score metrics, and compared it against a baseline model trained without the federated framework.
 
 
-### Authors' contributions
+### 1.2 Authors' contributions
 
 - **Jennifer** helped develop the implementation for federated learning of a RoBERTa model for NER. She also set up the evaluation scheme and was responsible for setting up an outline for the presentation slides and report. She also took on responsibility for the report writing and constructing part of the presentation slides.
 
@@ -220,4 +220,4 @@ It is possible to run our code on an arbitrary large number of datasets, given t
 ## 7. Acknowledgements
 This project was partially supported by the Wallenberg AI, Autonomous Systems and Software Program funded by Knut and Alice Wallenberg Foundation to fufill the requirements to pass the WASP Graduate School Course Scalable Data Science and Distributed Machine Learning - ScaDaMaLe-WASP-UU-2024 at https://lamastex.github.io/ScaDaMaLe. Computing infrastructure for learning was supported by Databricks Inc.'s Community Edition. The course was Industrially sponsored by Jim Dowling of Logical Clocks AB, Stockholm, Sweden, Reza Zadeh of Matroid Inc., Palo Alto, California, USA, and Andreas Hellander & Salman Toor of Scaleout Systems AB, Uppsala, Sweden. 
 
-The computations performed in this project were enabled by resources provided by Chalmers e-Commons at Chalmers.
+The computations were enabled by resources provided by the National Academic Infrastructure for Supercomputing in Sweden (NAISS), partially funded by the Swedish Research Council through grant agreement no. 2022-06725.
